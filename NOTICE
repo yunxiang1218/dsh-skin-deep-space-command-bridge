@@ -1,0 +1,15 @@
+Deep Space Command Bridge is an independent DeepSeek Harness theme.
+It is not an official DeepSeek, NASA, ESA, CSA or STScI product.
+
+The package structure and integration seams were inspected in the locally
+installed dsh-theme-plugin and maid-atelier packages. Their application code
+and artwork have not been overwritten or bundled into this theme.
+
+The galaxy and nebula photographs are credited in assets/resource/CREDIT.md.
+They are not licensed under this project's MIT software license. The source
+usage terms remain applicable. The cockpit frame is AI-generated artwork.
+The default panorama is an AI-assisted artistic composite of credited M83,
+Westerlund 2 and Webb Cosmic Cliffs observations. It is not a scientific sky map.
+The titanium wall texture is also AI-generated. One continuous panorama is shared by three window apertures;
+procedural stars and warp trails are separate decorative effects.
+The three independently dockable working screens are live UI, not artwork.

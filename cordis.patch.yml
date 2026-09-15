@@ -1,0 +1,3 @@
+- insert:
+    - id: ui-skin-deep-space-command-bridge
+      name: '@dsh-external/dsh-client-ui-skin-deep-space-command-bridge'

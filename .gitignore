@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# packed release archives (rebuild with `npm run pack:theme`)
+*.tgz
+
+# logs and scratch
+*.log
+npm-debug.log*
+.preview.log
+.preview-error.log
+tmp/
+*.local
+
+# isolated preview and real-host test data: these directories contain local DSH
+# profiles, sessions and settings created during validation and must not ship.
+test-results/
+
+# editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,250 @@
+/* All rules are scoped to the theme lease. Native panes retain their own geometry and controls. */
+body[data-dsh-deep-space-command-bridge] {
+  --dsc-ink:#e5edf1; --dsc-muted:#9bafbc; --dsc-cyan:#72e6db; --dsc-amber:#d5b382;
+  --dsc-line:rgba(126,190,203,.25); --dsc-glass:rgba(9,22,32,.92);
+  --dsc-horizon:40vh; --dsc-top:calc(var(--dsc-horizon) + 32px); --dsc-right:21vw; --dsc-gutter:4vw; --dsc-bottom:5vh;
+  background:#030910; color:var(--dsc-ink); color-scheme:dark;
+  font-family:Inter,"Segoe UI","Microsoft YaHei UI",sans-serif;
+}
+body[data-dsh-deep-space-command-bridge] #root {
+  position:fixed; inset:var(--dsc-top) 28vw var(--dsc-bottom) var(--dsc-gutter);
+  width:auto; height:auto; background:transparent;
+}
+body[data-dsh-deep-space-command-bridge] #root [data-slot=root] {height:100%}
+body[data-dsh-deep-space-command-bridge] :is([data-pane=sidebar],[class*=sidebarCol]) {
+  border:1px solid var(--dsc-line); background:linear-gradient(135deg,rgba(21,39,51,.97),rgba(7,18,28,.96));
+  border-radius:6px; box-shadow:inset 0 1px 0 #67818c40,0 12px 40px #0006;
+}
+body[data-dsh-deep-space-command-bridge] :is([data-pane=conversation],[class*=centerCol]) {
+  position:relative; margin-left:2vw; border:1px solid var(--dsc-line); border-top-color:#5d858c;
+  border-radius:6px; background:linear-gradient(145deg,rgba(16,32,44,.94),rgba(7,18,29,.95));
+  box-shadow:inset 0 1px 0 #c4eeef12,0 12px 50px #0005;
+}
+body[data-dsh-deep-space-command-bridge] :is([data-pane=details],[class*=detailsCol]) {background:#0d1b27}
+body[data-dsh-deep-space-command-bridge] [data-dsh-sidebar-root] {background:transparent;max-width:100%}
+body[data-dsh-deep-space-command-bridge] [data-dsh-sidebar-wide=true] [class*=logoRow] {min-height:48px;flex-shrink:0}
+body[data-dsh-deep-space-command-bridge] [data-slot=sidebar.workspaces] [role=treeitem][aria-selected=true] {
+  background:linear-gradient(90deg,#254b55,#162c3900); border-left:2px solid var(--dsc-cyan);
+}
+body[data-dsh-deep-space-command-bridge] [data-composer-card] {
+  background:linear-gradient(150deg,#142b39,#0b1d2b); border:1px solid #547c89;
+  border-radius:10px; box-shadow:0 0 0 4px #15273466,0 6px 22px #0004;
+}
+body[data-dsh-deep-space-command-bridge] [data-composer-input] {color:#f0f6f8;caret-color:var(--dsc-cyan);font-size:15px}
+body[data-dsh-deep-space-command-bridge] [data-chat-flow] {color:#e5edf1;font-size:15px;line-height:1.75}
+body[data-dsh-deep-space-command-bridge] [data-chat-flow] pre {background:#07131f;border:1px solid #27434f;border-radius:6px}
+body[data-dsh-deep-space-command-bridge] :is([role=dialog],[role=menu],[role=listbox]) {color:#e6eef4;background-color:#101e2b}
+body[data-dsh-deep-space-command-bridge] [data-shell-overlay] {z-index:1000}
+body[data-dsh-deep-space-command-bridge] :is(button,select,a,input,summary):focus-visible {outline:2px solid var(--dsc-cyan);outline-offset:3px}
+body[data-dsh-deep-space-command-bridge] [data-phase=hero] [data-composer-seat] {max-width:720px}
+body[data-dsh-deep-space-command-bridge] [data-slot="conversation.session.header"] > header {background:rgba(18,35,47,.9);border-bottom:1px solid var(--dsc-line)}
+body[data-dsh-deep-space-command-bridge] [class*=titlebar] {background:#09131e;color:#afc4d1}
+
+body[data-dsh-deep-space-command-bridge] [data-skin-owner=deep-space-command-bridge] {box-sizing:border-box}
+body[data-dsh-deep-space-command-bridge] [data-skin-owner=deep-space-command-bridge] *,
+body[data-dsh-deep-space-command-bridge] [data-skin-owner=deep-space-command-bridge] *::before,
+body[data-dsh-deep-space-command-bridge] [data-skin-owner=deep-space-command-bridge] *::after {box-sizing:border-box}
+body[data-dsh-deep-space-command-bridge] .dsc-stage {position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+body[data-dsh-deep-space-command-bridge] .dsc-stage::after {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,#0005,transparent 23%,transparent 77%,#0005);
+  box-shadow:inset 0 0 50px 8px #01060c;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-canopy {position:absolute;inset:0 0 auto;height:var(--dsc-horizon);pointer-events:none;z-index:1;filter:drop-shadow(0 2px 5px #000a)}
+body[data-dsh-deep-space-command-bridge] .dsc-deck {position:absolute;inset:var(--dsc-horizon) 0 0;pointer-events:none;z-index:1}
+body[data-dsh-deep-space-command-bridge] :is(.dsc-canopy,.dsc-deck) svg {width:100%;height:100%;display:block}
+body[data-dsh-deep-space-command-bridge] .dsc-space-environment {bottom:calc(100% - var(--dsc-horizon))!important}
+body[data-dsh-deep-space-command-bridge] .dsc-space-nebula {opacity:.95!important;background-size:auto 120%!important;background-repeat:no-repeat}
+body[data-dsh-deep-space-command-bridge] .dsc-image-credit {position:fixed;top:calc(var(--dsc-horizon) - 14px);left:30vw;right:28vw;text-align:center;color:#a4b8c4;font:8px/1.2 Consolas,monospace;text-decoration:none;z-index:2;text-shadow:0 1px 3px #000}
+body[data-dsh-deep-space-command-bridge] .dsc-image-credit:hover {color:#e8f6ff;text-decoration:underline}
+body[data-dsh-deep-space-command-bridge] .dsc-header {
+  position:fixed;top:18px;left:4vw;right:4vw;height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+  pointer-events:none;z-index:2;animation:dsc-boot .65s ease-out both;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-brand {display:flex;gap:16px;align-items:center}
+body[data-dsh-deep-space-command-bridge] .dsc-brand svg {width:44px;height:44px;fill:none;stroke:#b6e4e8;stroke-width:1.2;filter:drop-shadow(0 0 7px #85ced755)}
+body[data-dsh-deep-space-command-bridge] .dsc-eyebrow {font:9px/1.5 "Cascadia Code",Consolas,monospace;letter-spacing:2px;color:#a6c5cf}
+body[data-dsh-deep-space-command-bridge] .dsc-brand h1 {font-size:22px;letter-spacing:.2px;line-height:1.4;margin:3px 0 0;font-weight:300;color:#e8f1f4;text-shadow:0 3px 16px #000}
+body[data-dsh-deep-space-command-bridge] .dsc-brand h1 strong {font-weight:600}
+body[data-dsh-deep-space-command-bridge] .dsc-ship-tag {font:10px Consolas,monospace;letter-spacing:1.5px;display:flex;gap:10px;align-items:center;color:#b6c8cf}
+body[data-dsh-deep-space-command-bridge] .dsc-led {display:inline-block;width:5px;height:5px;border-radius:50%;background:#8dead6;box-shadow:0 0 8px #72e6db99;flex-shrink:0}
+body[data-dsh-deep-space-command-bridge] .dsc-serial {color:#7594a5;border-left:1px solid #66858c77;padding-left:17px;margin-left:5px}
+body[data-dsh-deep-space-command-bridge] .dsc-layout-toggle {pointer-events:auto;border:1px solid #58869c;background:#091b29dc;color:#cbeef5;padding:8px 12px;border-radius:3px;font:11px "Segoe UI","Microsoft YaHei UI",sans-serif;cursor:pointer;flex-shrink:0;box-shadow:inset 0 1px #b6e9ff18}
+body[data-dsh-deep-space-command-bridge] .dsc-layout-toggle:hover {background:#163348;border-color:#8ed9e7}
+body[data-dsh-deep-space-command-bridge] .dsc-viewport-caption {
+  position:fixed;top:auto;bottom:calc(100vh - var(--dsc-horizon) + 35px);left:30vw;right:28vw;display:flex;justify-content:space-between;align-items:flex-end;
+  pointer-events:none;z-index:1;text-shadow:0 2px 9px #000;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-viewport-caption p {font-size:18px;line-height:1.4;letter-spacing:1px;font-weight:300;margin:5px 0 0;color:#dce6eb}
+body[data-dsh-deep-space-command-bridge] .dsc-bearing {position:absolute;bottom:75px;left:50%;transform:translateX(-50%);white-space:nowrap;font:10px Consolas,monospace;color:#bddbe2bb;margin-bottom:4px;letter-spacing:2px}
+body[data-dsh-deep-space-command-bridge] .dsc-bearing span {color:#b3d5e5a6;padding:0 8px}
+body[data-dsh-deep-space-command-bridge] .dsc-window-tag {font:9px Consolas,monospace;letter-spacing:1.2px;color:#b3c5d5;margin-bottom:4px}
+body[data-dsh-deep-space-command-bridge] .dsc-panel {
+  background:linear-gradient(140deg,rgba(22,40,52,.97),rgba(6,19,29,.95));border:1px solid #4d778166;border-top-color:#7d9da4;
+  border-radius:6px;box-shadow:inset 0 1px 0 #d3ffff15,0 20px 50px #0008;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-core {
+  position:fixed;top:var(--dsc-top);right:var(--dsc-gutter);bottom:var(--dsc-bottom);width:var(--dsc-right);padding:14px 16px 12px;
+  overflow:auto;scrollbar-width:thin;scrollbar-color:#345362 transparent;z-index:3;animation:dsc-boot .75s ease-out both;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-core::before {content:"";position:absolute;top:0;left:20px;width:46px;height:2px;background:#9ce9de;box-shadow:0 0 12px #72e6db77}
+body[data-dsh-deep-space-command-bridge] .dsc-panel-title {display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+body[data-dsh-deep-space-command-bridge] .dsc-panel-title h2 {font-size:12px;font-weight:600;line-height:1.5;letter-spacing:2px;color:#e0f0f2;margin:4px 0 0}
+body[data-dsh-deep-space-command-bridge] .dsc-panel-title .dsc-eyebrow {font-size:8px;letter-spacing:1.5px;color:#91aab8}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit > div {position:absolute;border:1px solid #689ea64a;border-radius:50%;width:76px;height:76px;transform:rotateX(30deg) rotateY(-20deg)}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit .dsc-orbit-b {width:92px;height:92px;transform:rotateX(55deg) rotate(-40deg);border-color:#8de9d955}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit .dsc-orbit-c {width:92px;height:92px;transform:rotateY(65deg) rotate(20deg);border-color:#76a7b950}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit svg {width:33px;height:33px;stroke:#8bdccf;stroke-width:.8;fill:#4bd3be12;filter:drop-shadow(0 0 12px #5beadf66)}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit span {position:absolute;bottom:-7px;font:7px Consolas,monospace;color:#85b7be;letter-spacing:3px}
+body[data-dsh-deep-space-command-bridge] .dsc-core-orbit::after {content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent,transparent 3px,#80d5ce0c 4px);pointer-events:none}
+body[data-dsh-deep-space-command-bridge] .dsc-stage:has([data-mode=cruise]) ~ .dsc-core .dsc-orbit-b {animation:dsc-data-flow 16s linear infinite}
+body[data-dsh-deep-space-command-bridge] .dsc-field {display:block;margin-top:12px}
+body[data-dsh-deep-space-command-bridge] .dsc-field-label,
+body[data-dsh-deep-space-command-bridge] .dsc-section-label {display:block;color:#9eb9c4;font:9px/1.6 "Cascadia Code",Consolas,"Microsoft YaHei UI",monospace;letter-spacing:1px}
+body[data-dsh-deep-space-command-bridge] .dsc-select {
+  display:block;margin-top:5px;width:100%;padding:9px 10px;border:1px solid #3b6573;border-radius:3px;
+  font:12px "Segoe UI","Microsoft YaHei UI",sans-serif;background:#152e3a;color:#e5f5f5;cursor:pointer;min-height:35px;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-select:hover {border-color:#79bdbf}
+body[data-dsh-deep-space-command-bridge] .dsc-select:disabled {opacity:.65;cursor:default;border-color:#3b505d}
+body[data-dsh-deep-space-command-bridge] .dsc-note {color:#9bafbc;font-size:10px;line-height:1.6;margin:8px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-action-error {padding:8px;background:#402a1d;color:#f5c6a2;font-size:11px;border-left:2px solid #e2a26c;line-height:1.5}
+body[data-dsh-deep-space-command-bridge] .dsc-token-card {margin-top:17px;padding:13px 0;border-block:1px solid #59788640}
+body[data-dsh-deep-space-command-bridge] .dsc-section-label > span {float:right;letter-spacing:0;color:#8ca7b6}
+body[data-dsh-deep-space-command-bridge] .dsc-token-total {font:26px/1.5 "Cascadia Code",Consolas,monospace;color:#c3e9e4;letter-spacing:1px;margin:5px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-token-total small {font:8px Consolas,monospace;color:#91afbd}
+body[data-dsh-deep-space-command-bridge] .dsc-token-grid {display:grid;grid-template-columns:1fr 1fr;gap:14px;font:8px Consolas,monospace;color:#91abba}
+body[data-dsh-deep-space-command-bridge] .dsc-token-grid span {display:flex;justify-content:space-between;gap:4px}
+body[data-dsh-deep-space-command-bridge] .dsc-token-grid b {font-weight:400;color:#d5e7ec;font-size:10px}
+body[data-dsh-deep-space-command-bridge] .dsc-pressure {height:3px;background:#43616c50;margin-top:12px}
+body[data-dsh-deep-space-command-bridge] .dsc-pressure i {display:block;height:100%;background:#75cfc3;max-width:100%;transition:width .2s}
+body[data-dsh-deep-space-command-bridge] .dsc-token-card .dsc-note {font-size:9px;margin-bottom:0}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status {padding:13px 0 5px}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dl {margin:8px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dl div {display:flex;justify-content:space-between;gap:15px;font-size:10px;line-height:2.2}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dt {color:#99b1be}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dd {color:#b5dfd9;margin:0;text-align:right}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation {position:fixed;right:5vw;top:95px;width:20vw;max-width:290px;padding:12px 15px;z-index:2;background:linear-gradient(120deg,#0b1d2bc9,#07131cdd);box-shadow:0 6px 25px #0004;border-top-color:#7299a6}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls {font-size:10px;color:#aec6d0;margin-top:9px}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls button {color:#b5d9dd;background:#142c38;border:1px solid #41606e;border-radius:3px;padding:6px 8px;font:10px "Segoe UI","Microsoft YaHei UI",sans-serif;cursor:pointer}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls button:hover {background:#214753;border-color:#83c5c6}
+body[data-dsh-deep-space-command-bridge] .dsc-space-mode {width:100%;letter-spacing:1px}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls-heading {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-space-mode {display:grid;grid-template-columns:1fr 1fr;gap:6px}
+body[data-dsh-deep-space-command-bridge] .dsc-space-mode-button.dsc-is-active {background:#254953;border-color:#73bcb4;color:#c3f1e8}
+body[data-dsh-deep-space-command-bridge] .dsc-look-pad {gap:14px;position:relative}
+body[data-dsh-deep-space-command-bridge] .dsc-look-pad-range {font:9px Consolas,monospace;color:#7eaab7}
+body[data-dsh-deep-space-command-bridge] .dsc-look-reticle {position:absolute;left:50%;top:50%;width:11px;height:11px;border:1px solid #75c1b940;border-radius:50%;margin:-5px;pointer-events:none}
+body[data-dsh-deep-space-command-bridge] .dsc-space-readout {display:block;color:#8eacbb;text-align:center;font:9px Consolas,"Microsoft YaHei UI",monospace;margin:7px 0 12px}
+body[data-dsh-deep-space-command-bridge] .dsc-distance-control {display:block}
+body[data-dsh-deep-space-command-bridge] .dsc-distance-caption,
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls-footer {display:flex;align-items:center;justify-content:space-between;gap:8px}
+body[data-dsh-deep-space-command-bridge] .dsc-distance-value {font:10px Consolas,monospace;color:#b5e9e0}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls-footer {margin-top:7px}
+body[data-dsh-deep-space-command-bridge] .dsc-space-mode-status {font-size:9px;color:#a6c4cc}
+body[data-dsh-deep-space-command-bridge] .dsc-look-pad {min-height:45px;margin:9px 0;background:repeating-linear-gradient(0deg,transparent,transparent 12px,#70aeae10 13px),repeating-linear-gradient(90deg,transparent,transparent 18px,#70aeae10 19px),#091c29;border:1px dashed #4d7c8b!important;cursor:grab!important;text-align:center;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;border-radius:3px}
+body[data-dsh-deep-space-command-bridge] .dsc-look-pad:active {cursor:grabbing!important}
+body[data-dsh-deep-space-command-bridge] .dsc-distance-slider {width:100%;accent-color:#80d6ca;cursor:pointer}
+body[data-dsh-deep-space-command-bridge] .dsc-mission {position:fixed;top:103px;left:5vw;width:20vw;padding:12px 15px 8px;flex-shrink:0;order:-1;z-index:1;background:linear-gradient(110deg,#091824e8,#0c202c80);border:1px solid #688b9855;border-left:2px solid #70beca;box-shadow:0 7px 24px #0003}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-cross {color:#8eacb6;font-size:26px;font-weight:200}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-workspace {padding:10px;border:1px solid #46697670;border-radius:3px;background:#142f3b70}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-workspace strong {display:block;font-size:11px;line-height:1.5;font-weight:500;margin-top:5px;color:#c7e3e6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-dsh-deep-space-command-bridge] .dsc-current-task {margin:14px 0 12px}
+body[data-dsh-deep-space-command-bridge] .dsc-current-task p {font-size:11px;line-height:1.55;color:#d5e7ea;margin:5px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body[data-dsh-deep-space-command-bridge] .dsc-history-label {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-activity {padding:13px 17px 12px;flex-shrink:0;order:20;border-top:1px solid #59788640;background:#06101a50}
+body[data-dsh-deep-space-command-bridge] .dsc-activity ul,
+body[data-dsh-deep-space-command-bridge] .dsc-activity ol {list-style:none;padding:0;margin:7px 0 12px}
+body[data-dsh-deep-space-command-bridge] .dsc-activity ul:last-child {margin-bottom:0}
+body[data-dsh-deep-space-command-bridge] .dsc-empty {font-size:10px;color:#8ea5b5;line-height:1.6}
+body[data-dsh-deep-space-command-bridge] .dsc-log-row {display:flex;gap:6px;align-items:center;font-size:10px;line-height:1.8;color:#a8c4cd}
+body[data-dsh-deep-space-command-bridge] .dsc-log-row small {margin-left:auto;color:#85d5c7;font-size:8px}
+body[data-dsh-deep-space-command-bridge] .dsc-log-dot {width:3px;height:3px;background:#84b2c0;border-radius:50%}
+body[data-dsh-deep-space-command-bridge] .dsc-file-row {font:10px/1.8 Consolas,monospace;color:#b6ccd3;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback {margin-top:10px;border-top:1px solid #59788640;padding-top:10px;color:#bad6dd;font:10px "Segoe UI",sans-serif}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback summary {cursor:pointer;padding:5px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback[hidden] {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback .dsc-mission {padding:10px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback .dsc-activity {padding:10px 0;background:transparent}
+body[data-dsh-deep-space-command-bridge] .dsc-bottom {position:fixed;left:27px;right:27px;bottom:11px;display:flex;justify-content:space-between;gap:16px;color:#8ca5b7;font:8px Consolas,monospace;letter-spacing:1.5px;pointer-events:none}
+body[data-dsh-deep-space-command-bridge] .dsc-bottom .dsc-led {width:3px;height:3px;margin:0 7px 2px 0}
+@keyframes dsc-boot {from{opacity:0;translate:0 5px}to{opacity:1;translate:0 0}}
+@keyframes dsc-data-flow {from{transform:rotateX(55deg) rotate(-40deg)}to{transform:rotateX(55deg) rotate(320deg)}}
+body[data-dsh-deep-space-command-bridge] :is([class*=sidebarCol],[class*=centerCol],.dsc-core) {box-shadow:inset 0 1px #b9e2ef30,0 0 0 3px #030b12,0 0 0 5px #60819166,0 5px 13px 7px #0008}
+body[data-dsh-deep-space-command-bridge] [data-dsh-sidebar-root]::before {content:"MISSION ARCHIVE / 历史对话";display:block;padding:13px 16px 8px;color:#aad9e5;font:10px Consolas,"Microsoft YaHei UI",monospace;letter-spacing:1px;flex-shrink:0}
+body[data-dsh-deep-space-command-bridge] [data-dsh-sidebar-wide=false]::before {display:none}
+/* DSH owns grid widths and resize handles. Fixed child widths can overflow a collapsed native column. */
+body[data-dsh-deep-space-command-bridge] #root [class*=_frame]:has(> [class*=sidebarCol]),
+body[data-dsh-deep-space-command-bridge] #root [class*=_handle][data-side] {transition:none}
+body[data-dsh-deep-space-command-bridge] .dsc-token-card {margin-top:12px;padding-block:10px}
+body[data-dsh-deep-space-command-bridge] .dsc-token-total {font-size:22px;margin:3px 0}
+body[data-dsh-deep-space-command-bridge] .dsc-panel-title {margin-bottom:8px}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status {padding-top:10px}
+body[data-dsh-deep-space-command-bridge] .dsc-core .dsc-note {margin-block:5px;font-size:9px}
+body[data-dsh-deep-space-command-bridge] .dsc-core .dsc-select {min-height:32px;padding-block:7px}
+body[data-dsh-deep-space-command-bridge] .dsc-core .dsc-token-card {padding-block:8px;margin-top:10px}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dl {margin-block:4px}
+body[data-dsh-deep-space-command-bridge] .dsc-system-status dl div {line-height:1.9}
+/* Work view expands the native screens without moving or remounting their contents. */
+body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] {--dsc-horizon:94px;--dsc-top:116px;--dsc-bottom:30px}
+body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] :is(.dsc-mission,.dsc-viewport-caption,.dsc-navigation) {display:none}
+body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] .dsc-image-credit {top:86px}
+body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] .dsc-mission-fallback .dsc-mission {display:block;position:static;width:auto;border:0;background:transparent;box-shadow:none}
+@media (max-height:820px) and (min-width:801px) {
+  body[data-dsh-deep-space-command-bridge]{--dsc-horizon:37vh;--dsc-top:calc(var(--dsc-horizon) + 22px);--dsc-bottom:22px}
+  body[data-dsh-deep-space-command-bridge] .dsc-header {top:7px}
+  body[data-dsh-deep-space-command-bridge] .dsc-navigation {top:77px;padding-block:8px}
+  body[data-dsh-deep-space-command-bridge] .dsc-mission {top:87px;padding:9px 12px}
+  body[data-dsh-deep-space-command-bridge] .dsc-current-task {margin-block:8px}
+  body[data-dsh-deep-space-command-bridge] .dsc-mission-workspace {padding:7px}
+  body[data-dsh-deep-space-command-bridge] .dsc-space-readout {margin:4px 0 6px}
+  body[data-dsh-deep-space-command-bridge] .dsc-look-pad {min-height:29px;margin:5px 0}
+  body[data-dsh-deep-space-command-bridge] .dsc-core {padding:10px 13px}
+  body[data-dsh-deep-space-command-bridge] .dsc-field {margin-top:8px}
+  body[data-dsh-deep-space-command-bridge] .dsc-select {padding:6px 8px;min-height:31px}
+  body[data-dsh-deep-space-command-bridge] .dsc-activity {padding:8px 12px}
+}
+@media (min-width:801px) and (max-width:1200px) {
+  body[data-dsh-deep-space-command-bridge]{--dsc-right:244px;--dsc-gutter:16px}
+  body[data-dsh-deep-space-command-bridge] #root {right:280px}
+  body[data-dsh-deep-space-command-bridge] .dsc-brand h1 {font-size:18px}
+  body[data-dsh-deep-space-command-bridge] .dsc-ship-tag {display:none}
+  body[data-dsh-deep-space-command-bridge] .dsc-mission {left:25px;width:220px}
+  body[data-dsh-deep-space-command-bridge] .dsc-navigation {right:25px;width:220px}
+  body[data-dsh-deep-space-command-bridge] .dsc-bearing {display:none}
+}
+/* Narrow screens stack instruments below the native workspace, retaining a full-width editor. */
+@media (max-width:800px) {
+  body[data-dsh-deep-space-command-bridge]{overflow:auto!important;--dsc-top:150px;--dsc-horizon:150px;min-height:100dvh}
+  body[data-dsh-deep-space-command-bridge] #root{position:relative;inset:auto;margin:150px 10px 0;width:calc(100% - 20px);height:calc(100dvh - 166px);min-height:430px}
+  body[data-dsh-deep-space-command-bridge] .dsc-core{position:relative;inset:auto;width:calc(100% - 20px);margin:14px 10px 38px;max-height:none;z-index:auto}
+  body[data-dsh-deep-space-command-bridge] .dsc-header{position:absolute;top:20px;left:18px;right:18px;height:auto}
+  body[data-dsh-deep-space-command-bridge] .dsc-layout-toggle {display:none}
+  body[data-dsh-deep-space-command-bridge] .dsc-image-credit {position:absolute;top:135px;left:15px;right:15px;font-size:7px}
+  body[data-dsh-deep-space-command-bridge] .dsc-deck {opacity:.3}
+  body[data-dsh-deep-space-command-bridge] .dsc-navigation {position:relative;inset:auto;width:calc(100% - 20px);max-width:none;margin:12px 10px}
+  body[data-dsh-deep-space-command-bridge] .dsc-mission {position:static;width:auto;background:transparent;border:0;box-shadow:none;padding:12px}
+  body[data-dsh-deep-space-command-bridge] .dsc-mission-fallback .dsc-mission {padding:10px 0}
+  body[data-dsh-deep-space-command-bridge] .dsc-bearing {display:none}
+  body[data-dsh-deep-space-command-bridge] .dsc-brand{gap:10px}
+  body[data-dsh-deep-space-command-bridge] .dsc-brand svg{width:32px;height:32px}
+  body[data-dsh-deep-space-command-bridge] .dsc-brand h1{font-size:17px;max-width:275px}
+  body[data-dsh-deep-space-command-bridge] .dsc-eyebrow{font-size:7px;letter-spacing:1px}
+  body[data-dsh-deep-space-command-bridge] .dsc-ship-tag{display:none}
+  body[data-dsh-deep-space-command-bridge] .dsc-viewport-caption{position:absolute;top:91px;bottom:auto;left:20px;right:20px}
+  body[data-dsh-deep-space-command-bridge] .dsc-viewport-caption p{font-size:14px}
+  body[data-dsh-deep-space-command-bridge] .dsc-window-tag{font-size:7px;max-width:110px;text-align:right}
+  body[data-dsh-deep-space-command-bridge] .dsc-bottom{position:relative;inset:auto;margin:-22px 15px 13px;font-size:7px;letter-spacing:1px}
+  body[data-dsh-deep-space-command-bridge] .dsc-bottom span:nth-child(2){display:none}
+  body[data-dsh-deep-space-command-bridge] :is([data-pane=conversation],[class*=centerCol]){margin-left:5px}
+  body[data-dsh-deep-space-command-bridge] .dsc-core-orbit{display:none}
+  body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] {--dsc-horizon:150px}
+  body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] .dsc-navigation {display:block}
+  body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] .dsc-viewport-caption {display:flex}
+  body[data-dsh-deep-space-command-bridge][data-dsc-layout=work] .dsc-image-credit {top:135px}
+}
+@media (prefers-reduced-motion:reduce) {
+  body[data-dsh-deep-space-command-bridge] *{scroll-behavior:auto}
+  body[data-dsh-deep-space-command-bridge] :is(.dsc-header,.dsc-core,.dsc-pressure i,.dsc-orbit-b){animation:none!important;transition:none}
+}

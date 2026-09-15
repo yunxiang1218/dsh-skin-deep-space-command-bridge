@@ -1,0 +1,79 @@
+{
+  "name": "@dsh-external/dsh-client-ui-skin-deep-space-command-bridge",
+  "version": "0.2.0",
+  "description": "Deep Space Command Bridge — independent cockpit theme for DeepSeek Harness",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "author": "yunxiang1218",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yunxiang1218/dsh-skin-deep-space-command-bridge.git"
+  },
+  "homepage": "https://github.com/yunxiang1218/dsh-skin-deep-space-command-bridge#readme",
+  "bugs": {
+    "url": "https://github.com/yunxiang1218/dsh-skin-deep-space-command-bridge/issues"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-skin",
+    "theme",
+    "skin",
+    "cockpit",
+    "spaceship",
+    "cordis-plugin"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./skin.json": "./skin.json",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme",
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-api-workspace-controller",
+        "@deepseek-ai/dsh-client-ui-model-selection",
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-api-remotes"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.js",
+    "preview": "node scripts/preview.mjs",
+    "test:browser": "node scripts/host-smoke.mjs",
+    "pack:theme": "npm run build && npm pack"
+  },
+  "files": [
+    "lib",
+    "skin.json",
+    "skin.build.json",
+    "cordis.patch.yml",
+    "assets",
+    "preview/*.png",
+    "docs/*.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "jsdom": "^26.1.0",
+    "playwright": "^1.55.0"
+  }
+}

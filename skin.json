@@ -1,0 +1,16 @@
+{
+  "id": "deep-space-command-bridge",
+  "name": "深空指挥舰桥",
+  "nameEn": "Deep Space Command Bridge",
+  "author": "DSH Community",
+  "tagline": "Your intelligence. A new horizon.",
+  "description": "独立科幻驾驶舱主题：真实 DSH 任务与 AI 控制面板、深空舷窗、可调观察视角与航行模式。",
+  "tags": ["space", "cockpit", "mission-control", "glass", "dark"],
+  "accent": "#72e6db",
+  "bodyAttr": "data-dsh-deep-space-command-bridge",
+  "dshCompatibility": "0.1.2-rc.1",
+  "package": "@dsh-external/dsh-client-ui-skin-deep-space-command-bridge",
+  "wiring": {"id": "ui-skin-deep-space-command-bridge", "bundleWired": false},
+  "preview": {"light": "preview/bridge.png", "dark": "preview/bridge.png"},
+  "order": 6
+}
