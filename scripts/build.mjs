@@ -14,5 +14,13 @@ const result = await build({entryPoints:['src/client/index.js'], bundle:true, wr
 const bundle = `window.__ModuleLoader__.load({id:${JSON.stringify(pkg.name)},factory:(require)=>{var module={exports:{}};var exports=module.exports;\n${result.outputFiles[0].text}\nreturn module.exports;}});\n`;
 await writeFile('lib/client.js',bundle);
 await copyFile('src/index.js','lib/index.js');
-await writeFile('skin.build.json',JSON.stringify({schemaVersion:1,package:pkg.name,version:pkg.version,builtAt:new Date().toISOString(),clientSha256:createHash('sha256').update(bundle).digest('hex')},null,2)+'\n');
+// Keep the recorded build time stable while the bundle is byte-identical, so a
+// rebuild in an unchanged tree does not leave a spurious diff behind.
+const clientSha256 = createHash('sha256').update(bundle).digest('hex');
+let builtAt = new Date().toISOString();
+try {
+  const previous = JSON.parse(await readFile('skin.build.json','utf8'));
+  if (previous.clientSha256 === clientSha256 && typeof previous.builtAt === 'string') builtAt = previous.builtAt;
+} catch {}
+await writeFile('skin.build.json',JSON.stringify({schemaVersion:1,package:pkg.name,version:pkg.version,builtAt,clientSha256},null,2)+'\n');
 console.log(`Built official DSH module: ${(Buffer.byteLength(bundle)/1024/1024).toFixed(2)} MiB, assets embedded.`);
