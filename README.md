@@ -163,6 +163,8 @@ docs/                          插件契约、预览、素材生成与需求记�
 
 观测照片不适用本项目的 MIT 软件许可，仍受其原始使用条款约束。`docs/design-reference.png` 是设计阶段的概念参考图（含 DeepSeek 标识），DeepSeek 名称与标识归其权利人所有。
 
+发布包（`npm pack` 与 Release 附件）只包含运行时产物、预览图与署名文档，不含原始观测照片等素材源文件；需要在本地替换宇宙背景或查看原图时请克隆仓库，流程见 [assets/resource/README.md](assets/resource/README.md)。
+
 ## 许可
 
 软件部分以 [MIT](LICENSE) 许可发布。
