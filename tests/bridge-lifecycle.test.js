@@ -55,6 +55,20 @@ test('telemetry renders current goal, newest-first logs and real context pressur
  } finally {bridge.dispose();f.dom.window.close()}
 });
 
+test('artwork catalog reaches the flight system and credits stay in one accessible corner',()=>{
+ const f=fixture(),doc=f.dom.window.document;
+ const scenes=[{id:'azure',label:'青金云海',url:'data:image/png;base64,',credit:'NASA / artistic composite',source:'https://science.nasa.gov/'},
+   {id:'rose',label:'紫蔷薇星系',url:'data:image/png;base64,',credit:'ESA / artistic composite',source:'https://esahubble.org/'}];
+ const bridge=createBridge(f.ctx,{document:doc,adapter:f.adapter,scenes});
+ try {
+   assert.equal(bridge.space.getState().sceneId,'azure');
+   assert.equal(doc.querySelectorAll('.dsc-signature').length,1);
+   assert.match(doc.querySelector('.dsc-signature summary').textContent,/yunxiang/);
+   assert.match(doc.querySelector('.dsc-signature').textContent,/NASA/);
+   assert.equal(doc.querySelectorAll('.dsc-brand,.dsc-viewport-caption,.dsc-bottom,.dsc-image-credit').length,0);
+ } finally {bridge.dispose();f.dom.window.close()}
+});
+
 test('dashboard selects delegate only to host actions and remain intact through refresh',async()=>{
  const f=fixture(),doc=f.dom.window.document;
  const bridge=createBridge(f.ctx,{document:doc,adapter:f.adapter});

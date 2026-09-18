@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "package": "@dsh-external/dsh-client-ui-skin-deep-space-command-bridge",
-  "version": "0.2.1",
-  "builtAt": "2026-09-15T08:57:24.927Z",
-  "clientSha256": "792e839db508ed9d04dc279ebe9d2aca5949e9d333032f68284c99bb09715356"
+  "version": "0.4.0",
+  "builtAt": "2026-09-18T03:00:14.550Z",
+  "clientSha256": "457db41e0d918bfd66b4a04115a6fa6f8167e24b8836c5a24128b0c4cdd2c56a"
 }

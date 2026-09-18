@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-17",
+  "mode": "built-in image_gen",
+  "modelSelection": "The built-in tool does not expose a model parameter.",
+  "resolutionDecision": "User chose best available built-in output after being told it is not native 4K; no upscaling.",
+  "assets": [
+    {
+      "file": "assets/resource/cockpit-frame-v3.png",
+      "inputImages": [
+        "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\codex-clipboard-66983728-5757-4d83-adbb-36099a7cbfc1.png",
+        "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\codex-clipboard-eaab85eb-0074-42b3-8ed8-8ef24dbf2bdd.png"
+      ],
+      "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a09be0-99ff-7ee3-9167-749e4c05ffc6\\exec-c9b42933-a9f8-4c6e-882f-81aada6c391c.png",
+      "width": 1672,
+      "height": 941,
+      "prompt": "Use case: stylized-concept / production cockpit environment asset.\nCreate one NEW photorealistic spacecraft command bridge interior, using the two supplied images ONLY as aesthetic references. The reference's elegance, open panoramic glazing, slim luminous edges, restrained polished metal and dark glass are the goals. This is an industrial design redesign, NOT a repaint of an armoured military cockpit. Sophisticated future engineering is quiet, precise, light and spacious.\nRequested final native resolution: 3840 x 2160 (16:9), highest available detail and image quality. Razor-sharp precision surfaces, physically based rendering, exact clean bevels, subtle directional brushed titanium grain, anti-aliased edges, immaculate premium craftsmanship. All foreground and midground surfaces in focus. No painterly mush, no blur.\nAsset will be used as an interactive web cockpit frame with live HTML screens and animated space behind it. Therefore:\n- No text, no letters, no logos, no watermark, no icons, no HUD, no data or UI painted into the image.\n- NO seats, NO human, NO central foreground chair, NO steering wheel.\n- Exterior visible through the glazing should be an even nearly-black empty matte void, no planets, stars, nebula, buildings or horizon; these are added by the renderer.\n- Exactly three empty deep midnight-blue glass display apertures in the lower half: a generous central rectangular screen and one narrower trapezoidal wing screen on each side. Each is flat with a restrained fine chamfered silver bezel, NOT bulky black metal. Their screen glass must be blank, smooth and uniformly dark; all functional UI is added later.\nCamera: centered pilot eye position, very slight downward view, wide perspective without fisheye, symmetrical three-screen console. The main panoramic windshield dominates the upper 52 percent and connects naturally to the two side windows. Only two very slender polished silver structural ribs near the far left/right sides, no thick central bridge, no bulky armoured pillars. Thin continuous cockpit rim below the windows, not stacked crossbars or vents.\nScreen composition in normalized image coordinates, approximately:\nleft screen polygon (0.025,0.54), (0.235,0.51), (0.225,0.83), (0.012,0.88).\ncenter screen polygon (0.265,0.505), (0.735,0.505), (0.765,0.84), (0.235,0.84).\nright screen mirror of left.\nBelow the displays, a low shallow elegant crescent desk with broad uninterrupted graphite ceramic and satin silver surfaces. Only a few long deliberate seams, fine machined reveals and very thin cyan-white lighting at selected functional edges. Restrained warm white highlights. No exposed bolt rows, no pipe jungle, no tiny greebles, no massive black perimeter, no ornament pile-up. Functional sophisticated aerospace instrument design.\nReflections should softly pick up cool blue cosmic light from outside without drawing any external scenery onto the blank screen glass. Let elegant negative space, slim outlines, coherent curved forms and beautiful controlled material reflections carry the science-fiction feeling. Visually stunning premium cinematic CGI, as sharp and convincing as high-end automotive interior photography. Full bleed landscape asset."
+    },
+    {
+      "file": "assets/resource/cabin-titanium-v3.png",
+      "inputImages": [
+        "assets/resource/cockpit-frame-v3.png"
+      ],
+      "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a09be0-99ff-7ee3-9167-749e4c05ffc6\\exec-e6f9aaba-cee6-4c90-b42a-368d44dbb7e9.png",
+      "width": 1254,
+      "height": 1254,
+      "prompt": "Use case: stylized-concept. Create a seamless square architectural material texture for the side walls and ceiling of the luxury spacecraft cockpit in the reference. Match its elegant satin silver / cool graphite ceramic material, quiet precise design, very slim machined reveals and restrained cool white reflected light. This is a flat orthographic, straight-on wall material swatch, no perspective. Large smooth titanium panels with broad subtle satin grain, one or two fine inset seams, delicate milled edge detail. Predominantly medium-dark blue graphite with slender satin silver seam highlights. The repeating field should read as calm expensive aerospace architecture, not an industrial machinery wall. No giant black borders, no vents, pipes, bolt rows, hazard strips, stacked armour, text, logos, icons, screens, stars, planets or seats. Even soft light, crisp microscopic metal detail, no baked directional shadows or bright hotspots that make obvious repeat seams. Tile seamlessly on every edge. Requested native resolution 2048x2048 at the highest quality available."
+    }
+  ]
+}

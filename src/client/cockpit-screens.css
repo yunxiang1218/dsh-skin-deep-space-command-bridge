@@ -9,14 +9,13 @@ body[data-dsh-deep-space-command-bridge] .dsc-cabin-wall{position:absolute;left:
 body[data-dsh-deep-space-command-bridge] .dsc-cabin-front .dsc-canopy{top:var(--dsc-window-top);height:var(--dsc-window-height);transform:none;filter:none}
 body[data-dsh-deep-space-command-bridge] .dsc-cabin-front .dsc-deck{top:var(--dsc-deck-top);height:var(--dsc-deck-height);transform:none}
 body[data-dsh-deep-space-command-bridge] .dsc-stage .dsc-space-environment{bottom:0!important}
-body[data-dsh-deep-space-command-bridge] .dsc-stage .dsc-space-nebula{inset:-8%!important;background-size:cover!important;opacity:1!important}
 body[data-dsh-deep-space-command-bridge] .dsc-space-shade{opacity:.5}
 body[data-dsh-deep-space-command-bridge] #root {position:fixed;inset:0;width:auto;height:auto;z-index:4;pointer-events:none;background:transparent}
 body[data-dsh-deep-space-command-bridge] #root [class*=_frame]:has(> [class*=_sidebarCol]) {position:absolute;inset:0;display:block;overflow:visible;background:transparent;pointer-events:none;transform:none}
 body[data-dsh-deep-space-command-bridge] #root [class*=_handle][data-side] {display:none}
 body[data-dsh-deep-space-command-bridge] [data-dsc-screen] {
   position:fixed;inset:auto;left:0;top:0;width:var(--dsc-screen-width);height:var(--dsc-screen-height);margin:0;padding:0;
-  transform:var(--dsc-screen-transform);transform-origin:0 0;z-index:var(--dsc-screen-z,6);pointer-events:auto;
+  transform-origin:0 0;z-index:var(--dsc-screen-z,6);pointer-events:auto;
   border:0;border-radius:3px;background:linear-gradient(145deg,#0a1822,#060e17);color:#e5edf1;
   box-shadow:inset 0 0 26px #01050be0,inset 0 1px #4ea2b550;overflow:hidden;
 }
@@ -54,15 +53,17 @@ body[data-dsh-deep-space-command-bridge] [data-dsc-screen=core] .dsc-select {fon
 body[data-dsh-deep-space-command-bridge] [data-dsc-screen=core] .dsc-token-total {font-size:20px}
 /* Detached surfaces are flat and raised. Native modal dialogs also release the
    perspective containing block, so settings remain full viewport and usable. */
-body[data-dsh-deep-space-command-bridge] [data-dsc-screen=mission] {--dsc-float-left:3vw;--dsc-float-width:350px}
-body[data-dsh-deep-space-command-bridge] [data-dsc-screen=command] {--dsc-float-left:21vw;--dsc-float-width:58vw}
-body[data-dsh-deep-space-command-bridge] [data-dsc-screen=core] {--dsc-float-left:calc(97vw - 350px);--dsc-float-width:350px}
 body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:is([data-dsc-floating=true],:has([role=dialog])) {
-  transform:none;left:var(--dsc-float-left);top:100px;width:var(--dsc-float-width);height:calc(100dvh - 145px);
+  transform:none;left:var(--dsc-float-left);top:var(--dsc-float-top);width:var(--dsc-float-width);height:var(--dsc-float-height);min-width:0;min-height:0;box-sizing:border-box;
   border:1px solid #82c7d9;border-radius:8px;background:linear-gradient(150deg,#102637fa,#07131ffc);
-  box-shadow:0 35px 90px 20px #000b,0 0 0 5px #61d9f018,0 0 32px #6bcce82b,inset 0 1px #d8f8ff40;
+  box-shadow:0 18px 40px #0008,0 0 0 2px #61d9f018,inset 0 1px #d8f8ff40;
 }
-body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:has([role=dialog]) {overflow:visible;z-index:300}
+body[data-dsh-deep-space-command-bridge] [data-dsc-floating=true]>.dsc-screen-toolbar {cursor:grab;touch-action:none;user-select:none;min-height:32px}
+body[data-dsh-deep-space-command-bridge] [data-dsc-floating=true]>.dsc-screen-toolbar:focus-visible {outline:1px solid #a8ecff;outline-offset:-2px}
+body[data-dsh-deep-space-command-bridge] [data-dsc-dragging] {will-change:transform}
+body[data-dsh-deep-space-command-bridge] [data-dsc-dragging]>.dsc-screen-toolbar {cursor:grabbing}
+/* Native fixed dialogs must escape a transformed screen's containing block. */
+body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:has([role=dialog]) {transform:none!important;will-change:auto;overflow:visible;z-index:300}
 body[data-dsh-deep-space-command-bridge] [data-shell-overlay] {z-index:400;pointer-events:none}
 body[data-dsh-deep-space-command-bridge] [data-shell-overlay]>* {pointer-events:auto}
 body[data-dsh-deep-space-command-bridge] [class*=_frame]:not([data-details-collapsed]) > [class*=_detailsCol] {position:fixed;left:24vw;top:90px;width:52vw;height:calc(100dvh - 135px);z-index:200;pointer-events:auto;border:1px solid #6c9dac;border-radius:6px;box-shadow:0 15px 75px #000a}
@@ -119,7 +120,6 @@ body[data-dsh-deep-space-command-bridge] [data-dsc-screen=mission] .dsc-mission{
  body[data-dsh-deep-space-command-bridge] .dsc-viewport-caption p {font-size:14px}
  body[data-dsh-deep-space-command-bridge] .dsc-bearing {display:none}
  body[data-dsh-deep-space-command-bridge] .dsc-header {top:6px}
- body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:is([data-dsc-floating=true],:has([role=dialog])) {top:76px;height:calc(100dvh - 110px)}
 }
 @media (max-width:1000px) {
  body[data-dsh-deep-space-command-bridge]{overflow:auto!important;--dsc-horizon:150px}
@@ -128,6 +128,7 @@ body[data-dsh-deep-space-command-bridge] [data-dsc-screen=mission] .dsc-mission{
  body[data-dsh-deep-space-command-bridge] #root>:not(.dsc-core){order:0;flex-shrink:0}
  body[data-dsh-deep-space-command-bridge] #root [class*=_frame]:has(> [class*=_sidebarCol]){position:relative;inset:auto;display:grid;height:calc(100dvh - 170px);min-height:430px;overflow:visible}
  body[data-dsh-deep-space-command-bridge] [data-dsc-screen]{position:relative;inset:auto;width:auto;height:100%;transform:none;border:1px solid #456875;border-radius:4px}
+ body[data-dsh-deep-space-command-bridge] [data-dsc-screen][data-dsc-floating=false]{transform:none!important}
  body[data-dsh-deep-space-command-bridge] [data-dsc-screen=core]{width:100%;height:auto;min-height:400px;margin:14px 0}
  body[data-dsh-deep-space-command-bridge] [data-dsc-screen=command]{margin-left:5px}
  body[data-dsh-deep-space-command-bridge] .dsc-screen-toolbar{padding-inline:5px;font-size:8px;letter-spacing:0}
@@ -144,7 +145,7 @@ body[data-dsh-deep-space-command-bridge] [data-dsc-screen=mission] .dsc-mission{
  body[data-dsh-deep-space-command-bridge] .dsc-header{position:absolute;top:18px;left:20px;right:20px}
  body[data-dsh-deep-space-command-bridge] .dsc-layout-toggle,body[data-dsh-deep-space-command-bridge] .dsc-ship-tag{display:none}
  body[data-dsh-deep-space-command-bridge] .dsc-bottom{position:relative;inset:auto;margin:12px 15px}
- body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:is([data-dsc-floating=true],:has([role=dialog])){position:fixed;left:15px;top:65px;width:calc(100vw - 30px);height:calc(100dvh - 95px);margin:0}
+ body[data-dsh-deep-space-command-bridge] [data-dsc-screen]:is([data-dsc-floating=true],:has([role=dialog])){position:fixed;left:var(--dsc-float-left);top:var(--dsc-float-top);width:var(--dsc-float-width);height:var(--dsc-float-height);margin:0}
  body[data-dsh-deep-space-command-bridge] [data-dsc-screen][data-dsc-floating=true]>.dsc-screen-toolbar>span{display:block}
  body[data-dsh-deep-space-command-bridge] [class*=_frame]:not([data-details-collapsed]) > [class*=_detailsCol]{left:15px;top:65px;width:calc(100vw - 30px);height:calc(100dvh - 95px)}
 }

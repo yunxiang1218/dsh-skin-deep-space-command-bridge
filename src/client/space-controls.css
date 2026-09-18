@@ -1,0 +1,46 @@
+/* Flight controls and scene layers. Kept separate from the physical monitor geometry. */
+body[data-dsh-deep-space-command-bridge] .dsc-stage .dsc-space-panorama > .dsc-space-nebula {
+  inset:0!important;opacity:var(--dsc-scene-opacity,0)!important;background-size:cover!important;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-space-canvas[hidden] {display:none!important}
+body[data-dsh-deep-space-command-bridge] .dsc-sky-quality {display:flex;align-items:center;justify-content:space-between;gap:12px;color:#aecbd4;font-size:11px}
+body[data-dsh-deep-space-command-bridge] .dsc-sky-quality[hidden] {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-sky-quality-select {min-width:0;max-width:220px;padding:5px 7px;border:1px solid #62879c77;border-radius:4px;background:#152b3b;color:#d2e9f1;font:inherit}
+body[data-dsh-deep-space-command-bridge] .dsc-sky-quality-select[aria-busy="true"] {opacity:.6}
+body[data-dsh-deep-space-command-bridge] .dsc-cabin-front {will-change:transform}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation {width:330px}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-controls {
+  grid-template-columns:1fr;gap:10px;margin-top:10px;font-size:11px;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-mode {grid-area:auto;gap:6px}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-controls .dsc-space-mode-button {padding:5px 8px;font-size:11px}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-speeds {grid-area:auto;display:flex;flex-direction:column;gap:7px;min-width:0}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-caption {display:flex;align-items:center;justify-content:space-between;color:#aecbd4}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-value {font:10px Consolas,"Microsoft YaHei UI",monospace;color:#bfedf5}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-slider {
+  display:block;width:100%;margin:4px 0;accent-color:#95e0e8;cursor:ew-resize;height:16px;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-slider::-webkit-slider-runnable-track {
+  height:5px;border-radius:4px;border:1px solid #739bab66;
+  background:linear-gradient(90deg,#47727c 0 33.333%,#649eb2 33.333% 80%,#b1d2f9 80%);
+}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-slider::-webkit-slider-thumb {margin-top:-6px}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-marks {display:flex;justify-content:space-between;font-size:10px;color:#7795a5}
+body[data-dsh-deep-space-command-bridge] .dsc-speed-marks .dsc-is-active {background:none;border:0;color:#d1f6fa}
+body[data-dsh-deep-space-command-bridge] .dsc-view-tools {display:flex;align-items:center;gap:8px;border-top:1px solid #7aa9b325;padding-top:9px;min-width:0}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-look-pad {
+  grid-area:auto;flex:0 0 42px;width:42px;height:30px;min-height:30px;padding:3px;margin:0;font-size:10px;
+  border:1px solid #618b9b!important;background:linear-gradient(160deg,#203e4d,#101f2a);border-radius:4px;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-look-pad.dsc-is-dragging {border-color:#b9edf8!important;box-shadow:0 0 10px #78bdce30}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-readout {grid-area:auto;margin:0;font:10px Consolas,monospace;white-space:nowrap}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-distance-value {font:10px Consolas,monospace;color:#b5dce9;white-space:nowrap}
+body[data-dsh-deep-space-command-bridge] .dsc-distance-hint {margin-left:auto;font-size:9px;color:#7c9caa;white-space:nowrap}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-controls-footer {grid-area:auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;margin:0}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-mode-status {font-size:10px;color:#99b4c2;line-height:1.5}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-reset {padding:4px 8px;font-size:10px;flex-shrink:0}
+body[data-dsh-deep-space-command-bridge] .dsc-space-controls :focus-visible {outline:2px solid #b3edf6;outline-offset:3px}
+@media(max-width:1000px) {
+  body[data-dsh-deep-space-command-bridge] .dsc-navigation {width:auto;max-width:none}
+  body[data-dsh-deep-space-command-bridge] .dsc-navigation .dsc-space-controls {max-width:440px;margin-inline:auto}
+}

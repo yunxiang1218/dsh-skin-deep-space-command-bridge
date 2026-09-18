@@ -1,7 +1,7 @@
 // One physical camera drives the artwork, room surfaces and live monitor planes.
 export function cabinMetrics(width,height) {
-  return {width,height,top:-height*.5,horizon:height*.60,deckHeight:height*.46,
-    bottom:height*(.60+.46*494/383),focal:width*.85,cx:width/2,cy:height*.44};
+  return {width,height,top:-height*.5,horizon:height*.52,deckHeight:height*.66,
+    bottom:height*(.52+.66*494/383),focal:width*.85,cx:width/2,cy:height*.44};
 }
 export function multiplyMatrices(a,b) {
   return Array.from({length:16},(_,i)=>{
@@ -38,13 +38,40 @@ function projectPolygon(points,view,m) {
 export function createCabinRoom(stage,{textureUrl=''}={}) {
   const doc=stage.ownerDocument,win=doc.defaultView,canvas=doc.createElement('canvas');
   canvas.className='dsc-cabin-room';stage.append(canvas);
+  canvas.hidden=Boolean(textureUrl);
   const planes=Array.from({length:4},()=>{const node=doc.createElement('div');node.className='dsc-cabin-wall';
-    node.style.backgroundImage=`url(${JSON.stringify(textureUrl)})`;stage.append(node);return node;});
-  const ctx=canvas.getContext('2d');let oldSize='';
+    node.style.backgroundImage=`url(${JSON.stringify(textureUrl)})`;
+    node.style.display=textureUrl?'block':'none';node.style.willChange='transform';stage.append(node);return node;});
+  // Textured hull panels are compositor layers. They need no full-viewport 2D canvas repaint.
+  const ctx=textureUrl?null:canvas.getContext('2d');let oldSize='',oldView='',faces=[];
   function render(view,m) {
-    if(!ctx)return;
     const ratio=Math.min(win.devicePixelRatio||1,1.5),size=`${m.width}:${m.height}:${ratio}`;
-    if(size!==oldSize){canvas.width=m.width*ratio;canvas.height=m.height*ratio;oldSize=size;}
+    const viewKey=`${view.yaw||0}:${view.pitch||0}:${view.distance||1}`;
+    if(size===oldSize&&viewKey===oldView)return;
+    oldView=viewKey;
+    if(size!==oldSize){
+      if(ctx){canvas.width=m.width*ratio;canvas.height=m.height*ratio;}
+      const front=m.focal,back=-m.focal*2.5;
+      faces=[
+        {u:m.width,v:front-back,map:(u,v)=>[u,m.top,front-v],floor:false},
+        {u:m.width,v:front-back,map:(u,v)=>[u,m.bottom,front-v],floor:true},
+        {u:front-back,v:m.bottom-m.top,map:(u,v)=>[0,m.top+v,front-u]},
+        {u:front-back,v:m.bottom-m.top,map:(u,v)=>[m.width,m.top+v,front-u]},
+      ];
+      for(const [index,face] of faces.entries()){
+        const plane=planes[index];
+        plane.style.width=`${face.u}px`;plane.style.height=`${face.v}px`;
+        plane.style.backgroundSize=`${m.width*.78}px ${m.width*.78}px`;
+        plane.style.filter=`brightness(${face.floor?.56:.78})`;
+      }
+      oldSize=size;
+    }
+    if(textureUrl){
+      for(const [index,face] of faces.entries())
+        planes[index].style.transform=`matrix3d(${planeMatrix(view,m,face.map).join(',')})`;
+      return;
+    }
+    if(!ctx)return;
     ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,m.width,m.height);
     const draw=(points,fill,stroke,line=1)=>{
       const p=projectPolygon(points,view,m);if(p.length<3)return;
@@ -53,17 +80,7 @@ export function createCabinRoom(stage,{textureUrl=''}={}) {
     };
     // Full room volume, not an enlarged picture with empty margins. Inset panels,
     // bevels, cooling slots and lit conduits share the same world coordinates.
-    const front=m.focal,back=-m.focal*2.5;
-    const faces=[
-      {u:m.width,v:front-back,map:(u,v)=>[u,m.top,front-v],floor:false},
-      {u:m.width,v:front-back,map:(u,v)=>[u,m.bottom,front-v],floor:true},
-      {u:front-back,v:m.bottom-m.top,map:(u,v)=>[0,m.top+v,front-u]},
-      {u:front-back,v:m.bottom-m.top,map:(u,v)=>[m.width,m.top+v,front-u]},
-    ];
-    for(const [faceIndex,face] of faces.entries()) {
-      const plane=planes[faceIndex];
-      plane.style.cssText+=`;width:${face.u}px;height:${face.v}px;background-size:${m.width*.42}px ${m.width*.42}px;transform:matrix3d(${planeMatrix(view,m,face.map).join(',')});filter:brightness(${face.floor?.45:.67});display:${textureUrl?'block':'none'};`;
-      if(textureUrl)continue;
+    for(const face of faces) {
       const box=(x,y,w,h)=>[[x,y],[x+w,y],[x+w,y+h],[x,y+h]].map(p=>face.map(...p));
       draw(box(0,0,face.u,face.v),'#182832','#4b6776',2);
       const nu=Math.ceil(face.u/(m.width*.17)),nv=Math.ceil(face.v/(m.height*.31));

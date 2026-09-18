@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "description": "Fictional astronomical composite artwork generated from user-supplied photographs and credited official imagery. Not an accurate sky map or telescope observation.",
+  "generated": "2026-09-16",
+  "generator": "OpenAI Image Gen (built-in)",
+  "scenes": [
+    {
+      "id": "aurora-reach",
+      "label": "青金云海",
+      "file": "scenes/aurora-reach.webp",
+      "detailFile": "scenes/sources/webb-carina-weic2205a.jpg",
+      "photoLabel": "船底座星云 · Webb",
+      "detailWidth": 4000,
+      "detailHeight": 2317,
+      "credit": "NASA, ESA, CSA, and STScI",
+      "source": "https://esawebb.org/images/weic2205a/",
+      "width": 2172,
+      "height": 724,
+      "artwork": "AI composite by yunxiang; not a telescope observation.",
+      "references": [
+        "universe picture/universe-04.webp",
+        "assets/resource/scenes/sources/webb-carina-weic2205a.jpg"
+      ]
+    },
+    {
+      "id": "violet-archipelago",
+      "label": "紫蔷薇星系",
+      "file": "scenes/violet-archipelago.webp",
+      "detailFile": "scenes/sources/hubble-triangulum-heic1901a.jpg",
+      "photoLabel": "三角座星系 · Hubble",
+      "detailWidth": 4000,
+      "detailHeight": 2251,
+      "credit": "NASA, ESA, and M. Durbin, J. Dalcanton, and B. F. Williams (University of Washington)",
+      "source": "https://esahubble.org/images/heic1901a/",
+      "width": 2172,
+      "height": 724,
+      "artwork": "AI composite by yunxiang; not a telescope observation.",
+      "references": [
+        "universe picture/universe-02.webp",
+        "universe picture/universe-07.webp",
+        "assets/resource/scenes/sources/hubble-triangulum-heic1901a.jpg"
+      ]
+    },
+    {
+      "id": "sapphire-veil",
+      "label": "冰蓝尘海",
+      "file": "scenes/sapphire-veil.webp",
+      "detailFile": "scenes/sources/eso-m78-eso1105a.jpg",
+      "photoLabel": "M78 反射星云 · ESO",
+      "detailWidth": 4000,
+      "detailHeight": 3876,
+      "credit": "ESO/Igor Chekalin",
+      "source": "https://www.eso.org/public/images/eso1105a/",
+      "width": 2172,
+      "height": 724,
+      "artwork": "AI composite by yunxiang; not a telescope observation.",
+      "references": [
+        "universe picture/universe-09.webp",
+        "assets/resource/scenes/sources/eso-m78-eso1105a.jpg"
+      ]
+    },
+    {
+      "id": "ember-forge",
+      "label": "赤金星炉",
+      "file": "scenes/ember-forge.webp",
+      "detailFile": "scenes/sources/webb-rho-ophiuchi-weic2316a.jpg",
+      "photoLabel": "蛇夫座 ρ · Webb",
+      "detailWidth": 4000,
+      "detailHeight": 3746,
+      "credit": "NASA, ESA, CSA, STScI, K. Pontoppidan (STScI), A. Pagan (STScI)",
+      "source": "https://esawebb.org/images/weic2316a/",
+      "width": 2172,
+      "height": 724,
+      "artwork": "AI composite by yunxiang; not a telescope observation.",
+      "references": [
+        "universe picture/universe-05.webp",
+        "universe picture/universe-08.webp",
+        "assets/resource/scenes/sources/webb-rho-ophiuchi-weic2316a.jpg"
+      ]
+    }
+  ]
+}

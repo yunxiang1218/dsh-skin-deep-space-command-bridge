@@ -6,15 +6,28 @@ import { mkdir, mkdtemp, readFile, writeFile, symlink, access, copyFile } from '
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import {installPerformanceProbe,startPerformanceSample,finishPerformanceSample} from './performance-smoke.mjs';
+import {startFrameTrace} from './trace-performance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const resultsRoot = join(root, 'test-results');
+const hardware=process.argv.includes('--hardware'),uncapped=process.argv.includes('--uncapped'),headed=process.argv.includes('--headed');
+const browserArgs=[...(hardware?['--use-angle=d3d11','--enable-gpu']:[]),...(uncapped?['--disable-frame-rate-limit','--disable-gpu-vsync']:[])];
 const resources = process.env.DSH_DESKTOP_RESOURCES || join(process.env.LOCALAPPDATA, 'Programs', 'DSH Desktop', 'resources');
 const bundledModules = join(resources, 'app', 'node_modules');
 const runtime = join(bundledModules, 'node', 'bin', 'node.exe');
 const cli = join(bundledModules, '@deepseek-ai', 'dsh', 'lib', 'bin.js');
 const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 const skin = JSON.parse(await readFile(join(root, 'skin.json'), 'utf8'));
+const sceneCatalog=JSON.parse(await readFile(join(root,'assets','resource','scenes','manifest.json'),'utf8')).scenes;
+assert.equal(sceneCatalog.length,4,'Four distinct universe scenes are supplied');
+assert.equal(new Set(sceneCatalog.map(scene=>scene.id)).size,4);
+const sceneImages=await Promise.all(sceneCatalog.map(async scene=>{
+  const bytes=await readFile(join(root,'assets','resource',scene.detailFile || scene.file));
+  return {id:scene.id,suffix:bytes.toString('base64').slice(-128),width:scene.detailWidth || scene.width,height:scene.detailHeight || scene.height};
+}));
+const artImages=await Promise.all(sceneCatalog.map(async scene=>({id:scene.id,
+  suffix:(await readFile(join(root,'assets','resource',scene.file))).toString('base64').slice(-128),width:scene.width,height:scene.height})));
 await access(join(root, 'lib', 'client.js'));
 await access(runtime);
 await mkdir(resultsRoot, { recursive: true });
@@ -62,7 +75,7 @@ child.stdout.on('data', ingest);
 child.stderr.on('data', ingest);
 let browser;
 let page;
-let report = { package: manifest.name, isolatedHome, installedRuntime: runtime, success: false };
+let report = { package: manifest.name, version:manifest.version,isolatedHome, installedRuntime: runtime, success: false,browserRun:{headless:!headed,hardwareRequested:hardware,uncappedThroughput:uncapped,args:browserArgs,physical144HzVerified:false} };
 try {
   const deadline = Date.now() + 45000;
   while (!authenticatedUrl) {
@@ -70,14 +83,51 @@ try {
     if (Date.now() > deadline) throw new Error(`Isolated DSH host did not become ready: ${redact(rawLog).slice(-5000)}`);
     await new Promise((done) => setTimeout(done, 150));
   }
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({ headless: !headed,args:browserArgs });
   page = await browser.newPage({ viewport: { width: 1536, height: 960 } });
+  await installPerformanceProbe(page,{headless:!headed});
+  await page.addInitScript(()=>{
+    window.__dscDecodedImages=[];
+    window.__dscWorkerEvents=[];
+    const NativeWorker=window.Worker;
+    window.Worker=class extends NativeWorker {
+      constructor(...args){super(...args);this.addEventListener('message',({data})=>this.record('received',data));}
+      record(direction,data){
+        const {type,id,key,y,rows,width,height,message}=data||{};
+        window.__dscWorkerEvents.push({at:performance.now(),direction,type,id,key,y,rows,width,height,message});
+        if(window.__dscWorkerEvents.length>80)window.__dscWorkerEvents.shift();
+      }
+      postMessage(data,...rest){this.record('sent',data);return super.postMessage(data,...rest);}
+    };
+    const decode=HTMLImageElement.prototype.decode;
+    HTMLImageElement.prototype.decode=function(){return decode.call(this).then(()=>{
+      if(this.src.startsWith('data:'))window.__dscDecodedImages.push({suffix:this.src.slice(-128),width:this.naturalWidth,height:this.naturalHeight});
+    });};
+  });
   page.on('pageerror', (error) => pageErrors.push(redact(error.message)));
   page.on('requestfailed', (request) => failedRequests.push({ url: redact(request.url()), error: request.failure()?.errorText }));
   await page.goto(authenticatedUrl, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForFunction((attr) => document.body.hasAttribute(attr), skin.bodyAttr, { timeout: 30000 });
   await page.waitForSelector('[data-composer-input]', {timeout:30000});
   await page.waitForSelector('.dsc-space-controls',{state:'attached'});
+  report.gpu=await page.locator('.dsc-space-environment').evaluate(environment=>{
+    const canvas=environment.querySelector('.dsc-space-canvas-gpu');
+    const context=canvas?.getContext('webgl2');
+    const debug=context?.getExtension('WEBGL_debug_renderer_info');
+    return {themeRenderer:environment.dataset.renderer,contextAvailable:Boolean(context),
+      renderer:debug?context.getParameter(debug.UNMASKED_RENDERER_WEBGL):null,
+      vendor:debug?context.getParameter(debug.UNMASKED_VENDOR_WEBGL):null,
+      version:context?.getParameter(context.VERSION)||null};
+  });
+  await page.waitForFunction(expected=>expected.every(scene=>window.__dscDecodedImages.some(image=>image.suffix===scene.suffix&&image.width===scene.width&&image.height===scene.height)),sceneImages,{timeout:30000});
+  const decodedSceneIds=sceneImages.map(scene=>scene.id);
+  if(hardware) {
+    await page.waitForFunction(()=>document.querySelector('.dsc-space-environment')?.dataset.backgroundRenderer==='webgl2',{},{timeout:30000});
+    report.backgroundRenderer='webgl2-worker-strip-upload';
+  }
+  assert.equal(await page.locator('details.dsc-signature').count(),1,'There is one theme signature');
+  assert.match(await page.locator('details.dsc-signature>summary').innerText(),/yunxiang/);
+  assert.equal(await page.locator('.dsc-header,.dsc-viewport-caption,.dsc-bottom,.dsc-image-credit').count(),0,'Old repeated title and watermark layers are removed');
   const notice = page.getByRole('dialog').filter({hasText:'内测声明'});
   await notice.waitFor({state:'visible',timeout:15000});
   await notice.getByRole('button',{name:'继续',exact:true}).click();
@@ -106,16 +156,16 @@ try {
   const nativeEditor = await editor.elementHandle();
   const commandPanel=page.locator('[data-dsc-screen="command"]');
   const originalRootHeight = await commandPanel.evaluate(node=>node.getBoundingClientRect().height);
-  await page.getByRole('button',{name:'展开工作区',exact:true}).click();
+  await page.locator('[data-dsc-dock-toggle="command"]').click();
   assert.ok(await commandPanel.evaluate(node=>node.getBoundingClientRect().height)>originalRootHeight+150, 'Floating the main screen expands the actual conversation area');
   assert.equal(await nativeEditor.evaluate(node=>node===document.querySelector('[data-composer-input]')),true, 'Work view retains the same native editor node');
   assert.equal(await editor.innerText(),draft);
-  await page.getByRole('button',{name:'返回舰桥',exact:true}).click();
+  await page.locator('[data-dsc-dock-toggle="command"]').click();
   for(const id of ['mission','command','core']) {
     const button=page.locator(`[data-dsc-dock-toggle="${id}"]`),panel=page.locator(`[data-dsc-screen="${id}"]`);
     await button.click();
     assert.equal(await panel.getAttribute('data-dsc-floating'),'true');
-    assert.equal(await panel.evaluate(node=>getComputedStyle(node).transform),'none');
+    assert.match(await panel.evaluate(node=>getComputedStyle(node).transform),/^matrix\(1, 0, 0, 1, /,'A detached screen is flat and translated');
     assert.equal(await nativeEditor.evaluate(node=>node===document.querySelector('[data-composer-input]')),true);
     if(id==='command')await page.screenshot({path:join(runDir,'host-floating.png'),animations:'disabled'});
     await button.click();
@@ -123,6 +173,36 @@ try {
     assert.match(await panel.evaluate(node=>getComputedStyle(node).transform),/^matrix/);
     assert.equal(await editor.innerText(),draft);
   }
+
+  const floatingLayouts=[];
+  const screenBounds=()=>page.locator('[data-dsc-screen]').evaluateAll(nodes=>Object.fromEntries(nodes.map(node=>{
+    const r=node.getBoundingClientRect();return [node.dataset.dscScreen,{x:r.x,y:r.y,width:r.width,height:r.height}];
+  })));
+  for(const id of ['mission','command','core'])await page.locator(`[data-dsc-dock-toggle="${id}"]`).click();
+  for(const [width,height] of [[1100,700],[1366,768],[1536,960],[1920,1080]]) {
+    await page.setViewportSize({width,height});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    const panels=await screenBounds(),rows=Object.values(panels);
+    for(const r of rows)assert.ok(r.x>=0&&r.y>=0&&r.x+r.width<=width+1&&r.y+r.height<=height+1,`All floated screens fit at ${width}px`);
+    for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++) {
+      const a=rows[i],b=rows[j];assert.ok(a.x+a.width<=b.x+1||b.x+b.width<=a.x+1||a.y+a.height<=b.y+1||b.y+b.height<=a.y+1,`Three floated screens never overlap by default at ${width}px`);
+    }
+    floatingLayouts.push({width,height,panels});
+  }
+  await page.setViewportSize({width:1536,height:960});
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await page.screenshot({path:join(runDir,'host-three-floating.png'),animations:'disabled'});
+  const performanceSamples=[],dragSample=await startPerformanceSample(page,'three-floating-screen-drag');
+  const handle=await commandPanel.locator('.dsc-screen-toolbar').boundingBox(),beforeDrag=await commandPanel.boundingBox();
+  await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();
+  for(let i=1;i<=60;i++)await page.mouse.move(handle.x+handle.width/2+60*i/60,handle.y+handle.height/2+25*i/60);
+  await page.mouse.up();
+  performanceSamples.push(await finishPerformanceSample(page,dragSample));
+  const afterDrag=await commandPanel.boundingBox();
+  assert.ok(Math.abs(afterDrag.x-beforeDrag.x-60)<1&&Math.abs(afterDrag.y-beforeDrag.y-25)<1,'A native DSH window follows its dragged toolbar');
+  assert.equal(await nativeEditor.evaluate(node=>node===document.querySelector('[data-composer-input]')),true);
+  assert.equal(await editor.innerText(),draft,'Floating-window movement preserves the native draft');
+  for(const id of ['mission','command','core'])await page.locator(`[data-dsc-dock-toggle="${id}"]`).click();
 
   const modeControl = page.locator('[data-dsc-control="mode"]');
   let modeCheck = { available: await modeControl.isEnabled(), switched: false };
@@ -180,64 +260,112 @@ try {
   const flight = page.locator('.dsc-space-controls');
   assert.equal(await flight.isVisible(),false,'Flight controls start collapsed to keep the window clear');
   await page.getByRole('button',{name:'展开飞行控制',exact:true}).click();
+  const imagery = flight.getByRole('combobox',{name:'舷窗影像',exact:true});
+  assert.equal(await imagery.inputValue(),'photo','High-resolution originals are selected by default');
+  await imagery.selectOption('art');
+  await page.waitForFunction(()=>document.querySelector('.dsc-space-environment').dataset.skyQuality==='art');
+  await page.waitForFunction(expected=>expected.every(scene=>window.__dscDecodedImages.some(image=>image.suffix===scene.suffix&&image.width===scene.width&&image.height===scene.height)),artImages);
+  await page.screenshot({path:join(runDir,'host-artwork.png'),animations:'disabled'});
+  await imagery.selectOption('photo');
+  await page.waitForFunction(()=>document.querySelector('.dsc-space-environment').dataset.skyQuality==='photo');
+  report.hdImagery={default:'photo',artworkSwitch:true,decodedPhotos:sceneImages.map(({id,width,height})=>({id,width,height})),continuousPanorama:true};
   await flight.getByRole('button',{name:'巡航',exact:true}).click();
   assert.equal(await flight.getByRole('button',{name:'巡航',exact:true}).getAttribute('aria-pressed'), 'true');
-  for(const [label,speed] of [['缓慢','slow'],['快速','fast'],['极快','warp']]) {
-    await flight.getByRole('button',{name:label,exact:true}).click();
+  const throttle=flight.getByRole('slider',{name:'航行速度',exact:true});
+  const setThrottle=value=>throttle.evaluate((node,value)=>{node.value=String(value);node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));},value);
+  assert.equal(await flight.locator('.dsc-space-speed-button,.dsc-distance-slider').count(),0,'Old speed buttons and distance slider are removed');
+  for(const [value,speed] of [[.12,'slow'],[.56,'fast'],[1,'warp'],[.12,'slow']]) {
+    await setThrottle(value);
     assert.equal(await page.locator('.dsc-space-environment').getAttribute('data-speed'),speed);
   }
-  await page.waitForTimeout(3000);
-  await page.screenshot({path:join(runDir,'host-warp.png'),animations:'disabled'});
-  await flight.getByRole('button',{name:'缓慢',exact:true}).click();
+  const stopWarpTrace=process.argv.includes('--trace') ? await startFrameTrace(page) : null;
+  const warpSample=await startPerformanceSample(page,'warp-and-random-scene-crossfade');
+  const jumpEvidence=await page.evaluate(()=>new Promise((resolve,reject)=>{
+    const environment=document.querySelector('.dsc-space-environment'),slider=document.querySelector('.dsc-speed-slider');
+    const from=environment.dataset.scene,start=performance.now();let firstFadeAt=null,minimumCoverage=1,frames=0;
+    slider.value='1';slider.dispatchEvent(new Event('input',{bubbles:true}));
+    const frame=()=>{
+      const elapsed=performance.now()-start,opacity=[...document.querySelectorAll('.dsc-space-nebula')].map(node=>Number(getComputedStyle(node).opacity));
+      minimumCoverage=Math.min(minimumCoverage,Math.max(...opacity));frames++;
+      if(firstFadeAt===null&&opacity.some(value=>value>.001&&value<.999))firstFadeAt=elapsed;
+      if(environment.dataset.scene!==from&&environment.dataset.speed==='fast')return resolve({from,to:environment.dataset.scene,firstFadeAt,finishedAt:elapsed,minimumCoverage,frames,returnedTo:'fast'});
+      if(elapsed>18000)return reject(Error(`Warp did not advance scene: ${environment.dataset.scene}, ${environment.dataset.speed}; visibility=${document.visibilityState}; worker=${JSON.stringify(window.__dscWorkerEvents)}`));
+      requestAnimationFrame(frame);
+    };requestAnimationFrame(frame);
+  }));
+  performanceSamples.push(await finishPerformanceSample(page,warpSample));
+  if(stopWarpTrace) await writeFile(join(runDir,'warp-trace.json'),JSON.stringify(await stopWarpTrace()));
+  assert.ok(jumpEvidence.firstFadeAt>=4950,'A continuous warp dwell must last five seconds before the transition starts');
+  assert.ok(jumpEvidence.finishedAt-jumpEvidence.firstFadeAt>=1400,'The sky change is a gradual crossfade');
+  assert.ok(jumpEvidence.minimumCoverage>=.999,'The transition never exposes a black background between images');
+  assert.notEqual(jumpEvidence.to,jumpEvidence.from,'Random travel excludes the current scene');
+  assert.ok(sceneCatalog.some(scene=>scene.id===jumpEvidence.from)&&sceneCatalog.some(scene=>scene.id===jumpEvidence.to),'Warp uses one of the actual four packaged scenes');
+  await writeFile(join(runDir,'warp-transition.json'),JSON.stringify(jumpEvidence,null,2));
+  assert.equal(await throttle.inputValue(),'0.56','A completed warp returns the throttle to fast');
+  await page.screenshot({path:join(runDir,'host-arrival.png'),animations:'disabled'});
+  // Capture the tunnel before its five-second trigger without changing the timer.
+  await setThrottle(1);await page.waitForTimeout(2200);
+  await page.screenshot({path:join(runDir,'host-warp.png'),animations:'disabled'});await setThrottle(.12);
   await flight.getByRole('button',{name:'停泊',exact:true}).click();
   await page.waitForTimeout(9000);
   assert.equal(await flight.getByRole('button',{name:'停泊',exact:true}).getAttribute('aria-pressed'), 'true');
-  const lookPad = flight.getByRole('group',{name:/拖动观察整个船舱/});
+  const lookPad = flight.getByRole('button',{name:/拖动观察整个船舱/});
+  const initialView=await flight.locator('.dsc-space-readout').innerText();
   await lookPad.focus();
   await lookPad.press('ArrowRight');
   const changedView = await flight.locator('.dsc-space-readout').innerText();
-  assert.ok(!changedView.includes('偏航 +0°'), 'Viewport direction keys change the visual camera');
+  assert.notEqual(changedView,initialView,'Viewport direction keys change the visual camera');
   const padBox = await lookPad.boundingBox();
+  assert.ok(padBox.width<=100&&padBox.height<=50,'The cabin-view button stays compact');
+  const traceCamera=process.argv.includes('--trace-camera');
+  const stopCabinTrace=traceCamera ? await startFrameTrace(page) : null;
+  const cabinSample=await startPerformanceSample(page,'cabin-look-drag');
   await page.mouse.move(padBox.x+padBox.width/2,padBox.y+padBox.height/2);
   await page.mouse.down();
-  await page.mouse.move(padBox.x+padBox.width/2+50,padBox.y+padBox.height/2-15,{steps:5});
+  const dragStart=Date.now();
+  for(let i=1;i<=120||(traceCamera&&Date.now()-dragStart<5000);i++)await page.mouse.move(padBox.x+padBox.width/2+Math.sin(i/20)*50,padBox.y+padBox.height/2-Math.sin(i/27)*15);
   await page.mouse.up();
+  performanceSamples.push(await finishPerformanceSample(page,cabinSample));
+  if(stopCabinTrace) await writeFile(join(runDir,'cabin-trace.json'),JSON.stringify(await stopCabinTrace()));
   assert.notEqual(await flight.locator('.dsc-space-readout').innerText(),changedView,'Pointer dragging changes the visual camera');
-  const distance = flight.getByRole('slider',{name:'观察距离'});
-  const beforeDistance={screen:await commandPanel.evaluate(node=>getComputedStyle(node).transform),space:await page.locator('.dsc-space-nebula').evaluate(node=>node.style.transform)};
-  await distance.focus();
-  await distance.press('End');
-  assert.equal(await distance.inputValue(),'1.6','Distance control reaches its advertised far limit');
+  await flight.getByRole('button',{name:'复位',exact:true}).click();
+  const panorama=page.locator('.dsc-space-panorama');
+  const beforeDistance={screen:await commandPanel.evaluate(node=>getComputedStyle(node).transform),space:await panorama.evaluate(node=>node.style.transform)};
+  await lookPad.hover();for(let i=0;i<6;i++)await page.mouse.wheel(0,160);
+  await page.waitForFunction(()=>document.querySelector('.dsc-distance-value')?.textContent==='1.60×');
   assert.notEqual(await commandPanel.evaluate(node=>getComputedStyle(node).transform),beforeDistance.screen,'Distance moves the cockpit display');
-  assert.equal(await page.locator('.dsc-space-nebula').evaluate(node=>node.style.transform),beforeDistance.space,'Distance does not zoom the external galaxy');
+  assert.equal(await panorama.evaluate(node=>node.style.transform),beforeDistance.space,'Distance does not zoom the external galaxy');
   await page.screenshot({path:join(runDir,'host-cabin-far.png'),animations:'disabled'});
   await page.locator('[data-dsc-dock-toggle="command"]').click();
   const floatingBounds=await commandPanel.boundingBox();
-  await distance.focus();
-  await distance.press('Home');
-  assert.equal(await distance.inputValue(),'0.7','Distance control reaches the cockpit near limit');
+  await lookPad.hover();for(let i=0;i<8;i++)await page.mouse.wheel(0,-160);
+  await page.waitForFunction(()=>document.querySelector('.dsc-distance-value')?.textContent==='0.70×');
   assert.deepEqual(await commandPanel.boundingBox(),floatingBounds,'Floated working screen stays the same size and position during cabin zoom');
+  const distanceBeforeNativeScroll=await flight.locator('.dsc-distance-value').innerText();
+  await editor.hover();await page.mouse.wheel(0,200);await page.evaluate(()=>new Promise(requestAnimationFrame));
+  assert.equal(await flight.locator('.dsc-distance-value').innerText(),distanceBeforeNativeScroll,'Scrolling native work content never zooms the cabin');
   await page.locator('[data-dsc-dock-toggle="command"]').click();
-  assert.equal(await page.locator('.dsc-space-nebula').evaluate(node=>node.style.transform),beforeDistance.space,'Near cockpit distance also leaves galaxy depth unchanged');
+  assert.equal(await panorama.evaluate(node=>node.style.transform),beforeDistance.space,'Near cockpit distance also leaves galaxy depth unchanged');
   await page.screenshot({path:join(runDir,'host-cabin-near.png'),animations:'disabled'});
   assert.equal(await editor.innerText(),draft,'Flight controls preserve the native draft');
-  await flight.getByRole('button',{name:'视角复位',exact:true}).click();
-  assert.ok((await flight.locator('.dsc-space-readout').innerText()).includes('偏航 +0°'));
-  const sceneBeforeTurn=await page.locator('.dsc-space-nebula').evaluate(n=>n.style.transform);
+  await flight.getByRole('button',{name:'复位',exact:true}).click();
+  assert.equal(await flight.locator('.dsc-space-readout').innerText(),'+0° / +0°');
+  const sceneBeforeTurn=await panorama.evaluate(n=>n.style.transform);
   const cockpitBeforeTurn=await page.locator('.dsc-cabin-front').evaluate(n=>n.style.transform);
   for(const [name,key] of [['right','ArrowRight'],['left','ArrowLeft'],['up','ArrowUp'],['down','ArrowDown']]) {
     await lookPad.focus();
     for(let i=0;i<6;i++)await lookPad.press(`Shift+${key}`);
     assert.notEqual(await page.locator('.dsc-cabin-front').evaluate(n=>n.style.transform),cockpitBeforeTurn,'Head turns move the entire cabin');
-    assert.equal(await page.locator('.dsc-space-nebula').evaluate(n=>n.style.transform),sceneBeforeTurn,'Head turns are not background-only movement');
+    assert.equal(await panorama.evaluate(n=>n.style.transform),sceneBeforeTurn,'Head turns are not background-only movement');
     assert.equal(await page.locator('.dsc-cabin-wall').count(),4,'Continuous walls, floor and ceiling enclose the front');
     await page.screenshot({path:join(runDir,`host-look-${name}.png`),animations:'disabled'});
-    await flight.getByRole('button',{name:'视角复位',exact:true}).click();
+    await flight.getByRole('button',{name:'复位',exact:true}).click();
   }
   await page.getByRole('button',{name:'收起飞行控制',exact:true}).click();
   await page.getByRole('button',{name:'抬头观景',exact:true}).click();
   await page.screenshot({path:join(runDir,'host-observation.png'),animations:'disabled'});
   await page.getByRole('button',{name:'返回驾驶台',exact:true}).click();
+  await writeFile(join(runDir,'performance.json'),JSON.stringify({samples:performanceSamples,physical144HzVerified:false},null,2));
 
   const geometry = async () => page.evaluate(() => {
     const editor = document.querySelector('[data-composer-input]');
@@ -255,7 +383,7 @@ try {
     return {viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,composer:a,core:coreVisible?b:null,overlap,sidebarOverlap,editorUncovered:!!(point && (editor===point || editor.contains(point)))};
   });
   const layouts=[];
-  for (const [width,height] of [[1536,960],[1366,768],[1280,960],[768,960],[390,844]]) {
+  for (const [width,height] of [[3840,2160],[1536,960],[1366,768],[1280,960],[768,960],[390,844]]) {
     await page.setViewportSize({width,height});
     await editor.scrollIntoViewIfNeeded();
     await page.waitForFunction(() => document.getAnimations().filter(a=>a.effect?.target?.closest?.('#root')).every(a=>a.playState!=='running'));
@@ -265,6 +393,11 @@ try {
     assert.equal(layout.sidebarOverlap,false, `Native sidebar must not overlap the center at ${width}px`);
     assert.equal(layout.editorUncovered,true, `Native editor must remain clickable at ${width}px`);
     layouts.push(layout);
+    if(width===3840) {
+      // A large viewport resize also queues GPU raster tiles, after layout is ready.
+      await page.waitForTimeout(700);
+      await page.screenshot({path:join(runDir,'host-4k.png'),fullPage:true});
+    }
     if(width===1366) await page.screenshot({path:join(runDir,'host-laptop.png'),fullPage:true});
     if(width===390) await page.screenshot({path:join(runDir,'host-mobile.png'),fullPage:true});
   }
@@ -313,7 +446,7 @@ try {
   assert.deepEqual(pageErrors, [], 'Browser runtime errors during real-host activation/disposal');
   await mkdir(join(root,'preview'),{recursive:true});
   await copyFile(join(runDir,'host-desktop.png'),join(root,'preview','bridge.png'));
-  report = { ...report, success: true, snapshot, realWorkspace:root, createdSession:true, unsentDraft:true, modelUnavailable, modelUnavailableDetail, modelCheck, modeCheck, nativeSettings:true, flightControls:true, pointerDrag:true, distanceControl:true, cockpitDistanceNotScenery:true, floatingStableDuringCabinZoom:true, threeDockableScreens:true, threeSpeeds:true, workViewPreservesEditor:true, layouts, disabledThenReenabledWithReload: disabled, pageErrors, failedRequests };
+  report = { ...report, success: true, snapshot, realWorkspace:root, createdSession:true, unsentDraft:true, modelUnavailable, modelUnavailableDetail, modelCheck, modeCheck, nativeSettings:true, flightControls:true, pointerDrag:true, distanceControl:'wheel', cockpitDistanceNotScenery:true, floatingStableDuringCabinZoom:true, threeDockableScreens:true, threeSpeeds:'continuous slider with three bands', workViewPreservesEditor:true, threeFloatingWithoutOverlap:true,floatingWindowDrag:true,floatingLayouts,decodedSceneIds,jumpEvidence,uniqueYunxiangSignature:true,performanceSamples,physical144HzVerified:false,layouts, disabledThenReenabledWithReload: disabled, pageErrors, failedRequests };
 } catch (error) {
   if (page) {
     await page.screenshot({path:join(runDir,'failure.png'),fullPage:true}).catch(()=>{});

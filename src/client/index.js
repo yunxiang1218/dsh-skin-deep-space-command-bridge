@@ -9,7 +9,12 @@ export const inject = ['theme', 'sessions', 'workspaces', 'modelDirectories', 'c
 export const OWNER = 'deep-space-command-bridge';
 export const BODY_ATTRIBUTE = 'data-dsh-deep-space-command-bridge';
 const instances = new WeakMap();
-const WINDOW_APERTURES = 'M218 0H588L643 52H1027L1080 0H1450L1330 365L1201 400H487L338 366Z M31 0H141L268 361L68 460L0 396V302L61 111Z M1533 0H1644L1610 112L1672 302V397L1604 461L1403 360Z';
+// Traced from v3's slim panoramic glazing; the shared view also reaches the side slivers.
+const WINDOW_APERTURES = [
+  'M30 0H300L350 9L400 18L450 26L500 34L550 42L600 46L650 50L700 52L800 56L900 54L1000 51L1070 47L1100 43L1150 39L1200 30L1250 23L1300 14L1360 0H1641Q1660 0 1656 31L1552 403Q1549 414 1535 417L1353 445Q835 421 316 445L135 417Q124 413 120 400L17 39Q11 14 30 0Z',
+  'M0 123L84 400Q89 412 81 419L0 423Z',
+  'M1672 123L1588 400Q1583 412 1591 419L1672 423Z',
+].join(' ');
 
 function element(doc, tag, cls, text) {
   const node = doc.createElement(tag);
@@ -50,6 +55,7 @@ export function createBridge(ctx, options = {}) {
   const backgroundUrl = options.backgroundUrl ?? (typeof __BRIDGE_BACKGROUND__ !== 'undefined' ? __BRIDGE_BACKGROUND__ : '');
   const frameUrl = options.frameUrl ?? (typeof __BRIDGE_FRAME__ !== 'undefined' ? __BRIDGE_FRAME__ : '');
   const backgroundInfo = options.backgroundInfo ?? (typeof __BRIDGE_BACKGROUND_INFO__ !== 'undefined' ? __BRIDGE_BACKGROUND_INFO__ : {});
+  const scenes = options.scenes ?? (typeof __BRIDGE_SCENES__ !== 'undefined' ? __BRIDGE_SCENES__ : []);
   const style = own(element(doc, 'style', ''));
   style.textContent = css;
   doc.head.append(style);
@@ -60,18 +66,22 @@ export function createBridge(ctx, options = {}) {
   stage.setAttribute('aria-hidden', 'true');
   doc.body.prepend(stage);
   let screens,room,front;
-  const updateCabin = state => {
-    const m=cabinMetrics(win.innerWidth,win.innerHeight);
+  let metrics=cabinMetrics(win.innerWidth,win.innerHeight);
+  const sizeCabin = () => {
+    const m=metrics=cabinMetrics(win.innerWidth,win.innerHeight);
     stage.style.setProperty('--dsc-window-top',`${m.top}px`);
     stage.style.setProperty('--dsc-window-height',`${m.horizon-m.top}px`);
     stage.style.setProperty('--dsc-deck-top',`${m.horizon}px`);
     stage.style.setProperty('--dsc-deck-height',`${m.bottom-m.horizon}px`);
-    if(front)front.style.transform=`matrix3d(${cabinMatrix(state,m).join(',')})`;
-    room?.render(state,m);
-    screens?.refresh();
   };
-  const space = createSpaceEnvironment(stage, {backgroundUrl,onChange:updateCabin});
-  updateCabin(space.getState());
+  const updateCabin = (state,event) => {
+    if(event && event.kind !== 'view') return;
+    if(front)front.style.transform=`matrix3d(${cabinMatrix(state,metrics).join(',')})`;
+    room?.render(state,metrics);
+    screens?.updateView(state,metrics);
+  };
+  sizeCabin();
+  const space = createSpaceEnvironment(stage, {backgroundUrl,scenes,onChange:updateCabin});
   cleanups.push(() => space.dispose());
   room=createCabinRoom(stage,{textureUrl:typeof __BRIDGE_HULL__!=='undefined'?__BRIDGE_HULL__:''});cleanups.push(()=>room.dispose());
   front=element(doc,'div','dsc-cabin-front');stage.append(front);
@@ -81,32 +91,35 @@ export function createBridge(ctx, options = {}) {
   canopy.querySelector('image').setAttribute('href', frameUrl);
   front.append(canopy);
   const deck = element(doc, 'div', 'dsc-deck');
-  deck.innerHTML = `<svg viewBox="0 447 1672 494" preserveAspectRatio="none"><image width="1672" height="941"/></svg>`;
+  // Side windows extend below the canopy/deck seam: mask both halves with the
+  // same artwork-space aperture so their lower corners show the same panorama.
+  deck.innerHTML = `<svg viewBox="0 447 1672 494" preserveAspectRatio="none"><image width="1672" height="941" mask="url(#dsc-window-aperture)"/></svg>`;
   deck.querySelector('image').setAttribute('href', frameUrl);
   front.append(deck);
-  const resizeCabin=()=>updateCabin(space.getState());
+  const resizeCabin=()=>{sizeCabin();updateCabin(space.getState());};
   win.addEventListener('resize',resizeCabin);
   cleanups.push(()=>win.removeEventListener('resize',resizeCabin));
   resizeCabin();
 
-  const header = own(element(doc, 'header', 'dsc-header'));
-  header.innerHTML = `<div class="dsc-brand"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 44 38H4Z M24 15 35 34H13Z M24 3v12 M4 38l9-4 M44 38l-9-4"/></svg><div><span class="dsc-eyebrow">DEEPSEEK HARNESS · ORBITAL SYSTEMS</span><h1>Deep Space <strong>Command Bridge</strong></h1></div></div><div class="dsc-ship-tag"><span class="dsc-led"></span> COMMAND DECK <span class="dsc-serial">DS / 01</span></div>`;
-  const viewport = own(element(doc, 'div', 'dsc-viewport-caption'));
-  viewport.innerHTML = `<div><span class="dsc-eyebrow">OBSERVATION WINDOW</span><p>Beyond the horizon.</p></div><div class="dsc-bearing" aria-hidden="true">−60° <span>┄┄┄┄┄┄┄┄┄┄┄ ⌖ ┄┄┄┄┄┄┄┄┄┄┄</span> +60°</div><span class="dsc-window-tag">CARINA NEBULA / NGC 3324</span>`;
-  doc.body.append(header, viewport);
-  viewport.querySelector('.dsc-window-tag').textContent = backgroundInfo.label || 'DEEP SPACE / OBSERVATION';
-  const credit = own(element(doc, 'a', 'dsc-image-credit', backgroundInfo.credit || ''));
-  if (/^https:\/\//.test(backgroundInfo.source || '')) credit.href = backgroundInfo.source;
-  credit.target = '_blank';
-  credit.rel = 'noopener noreferrer';
-  doc.body.append(credit);
+  const signature = own(element(doc,'details','dsc-signature'));
+  signature.append(element(doc,'summary','','yunxiang · Deep Space'));
+  const credits=element(doc,'div','dsc-artwork-credits');
+  credits.append(element(doc,'p','','Deep Space Command Bridge · 高清实景使用天文原片；艺术全景为 AI 合成。航行动画为视觉模拟，并非真实星图。'));
+  for(const scene of scenes.length?scenes:[backgroundInfo]) {
+    const row=element(doc,'p','');
+    row.append(element(doc,'strong','',scene.label || 'Deep Space'),doc.createTextNode(' · '+(scene.credit || 'AI-generated artwork')));
+    if(/^https:\/\//.test(scene.source || '')) {
+      const link=element(doc,'a','','素材来源');link.href=scene.source;link.target='_blank';link.rel='noopener noreferrer';row.append(' ',link);
+    }
+    credits.append(row);
+  }
+  signature.append(credits);doc.body.append(signature);
   const layoutButton = element(doc, 'button', 'dsc-layout-toggle', '展开工作区');
   layoutButton.type = 'button';
   layoutButton.setAttribute('aria-pressed', 'false');
   const toggleLayout = () => screens?.setFloating('command',!screens.getState().command);
   layoutButton.addEventListener('click', toggleLayout);
   cleanups.push(() => layoutButton.removeEventListener('click', toggleLayout));
-  header.append(layoutButton);
 
   const core = own(element(doc, 'aside', 'dsc-core dsc-panel'));
   core.setAttribute('aria-label', 'AI Core Panel · AI 核心控制');
@@ -146,7 +159,7 @@ export function createBridge(ctx, options = {}) {
   const lookUp=()=>space.setView({yaw:0,pitch:18});const lookForward=()=>space.reset();
   observe.addEventListener('click',lookUp);returnView.addEventListener('click',lookForward);
   cleanups.push(()=>{observe.removeEventListener('click',lookUp);returnView.removeEventListener('click',lookForward);});
-  navBar.append(navToggle,observe,returnView);navigation.append(navBar,space.controls);
+  navBar.append(layoutButton,navToggle,observe,returnView);navigation.append(navBar,space.controls);
   doc.body.append(navigation);
   (doc.getElementById('root') || doc.body).append(core);
 
@@ -253,9 +266,6 @@ export function createBridge(ctx, options = {}) {
   }
   cleanups.push(adapter.subscribe(() => render(adapter.read())));
   render(adapter.read());
-  const bottom = own(element(doc,'footer','dsc-bottom'));
-  bottom.innerHTML = `<span><i class="dsc-led"></i> DEEP SPACE COMMAND BRIDGE</span><span>MISSION SYSTEMS / DSH NATIVE</span><span>INTERFACE v0.2</span>`;
-  doc.body.append(bottom);
   instances.set(doc, dispose);
   return {dispose, space, adapter, screens};
   } catch (error) {

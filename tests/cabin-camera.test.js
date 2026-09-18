@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cabinMetrics,cabinMatrix,multiplyMatrices} from '../src/client/cabin-camera.js';
+import {cabinMetrics,cabinMatrix,multiplyMatrices,createCabinRoom} from '../src/client/cabin-camera.js';
+import {JSDOM} from 'jsdom';
 import {projectScreenPoint,quadToMatrix,SCREEN_QUADS} from '../src/client/screen-docking.js';
 import {approachFlight} from '../src/client/space-environment.js';
 
@@ -41,4 +42,26 @@ test('acceleration and deceleration have bounded continuous, frame-rate independ
  const down=approachFlight(sixty,slow,.1);
  assert.ok(down.velocity<sixty.velocity&&down.velocity>slow.velocity);
  assert.ok(down.warp>0&&down.warp<sixty.warp);
+});
+
+test('textured cabin camera changes only compositor transforms until the viewport is resized',()=>{
+ const dom=new JSDOM('<body><div id="stage"></div></body>');
+ const doc=dom.window.document;
+ dom.window.HTMLCanvasElement.prototype.getContext=()=>{throw new Error('textured hull must not allocate a canvas renderer');};
+ const room=createCabinRoom(doc.querySelector('#stage'),{textureUrl:'/hull.webp'}),m=cabinMetrics(1536,960);
+ try{
+  room.render({yaw:0,pitch:0,distance:1},m);
+  const planes=[...doc.querySelectorAll('.dsc-cabin-wall')];
+  assert.equal(planes.length,4);assert.equal(doc.querySelector('canvas').hidden,true);
+  const original=planes.map(plane=>plane.style.transform);
+  for(const plane of planes)for(const property of ['width','height','backgroundSize','filter']){
+   const value=plane.style[property];
+   Object.defineProperty(plane.style,property,{configurable:true,get:()=>value,set:()=>{throw new Error(`${property} changed while turning camera`);}});
+  }
+  for(let i=1;i<25;i++)room.render({yaw:i,pitch:i/2,distance:1.1},m);
+  assert.ok(planes.every((plane,index)=>plane.style.transform!==original[index]));
+  for(const plane of planes)for(const property of ['width','height','backgroundSize','filter'])delete plane.style[property];
+  room.render({yaw:24,pitch:12,distance:1.1},cabinMetrics(1920,1080));
+  assert.equal(planes[0].style.width,'1920px');
+ }finally{room.dispose();assert.equal(doc.querySelectorAll('.dsc-cabin-wall,canvas').length,0);dom.window.close();}
 });

@@ -1,8 +1,22 @@
 # Space photographs and cockpit artwork
 
-## Default artistic panorama (2026-09-15)
+## Current cockpit artwork (0.4.0, 2026-09-17)
 
-`cosmic-horizon.png` is the default 1672×941 artistic composite generated with OpenAI Image Gen from the original M83, Westerlund 2 and Webb Cosmic Cliffs photographs below. `cosmic-panorama.png` preserves its first ultrawide variant. The images combine and extend observations into a fictional scene; they are **not a single telescope observation or an accurate sky map**. Source attribution remains required. Generation prompts and provenance are in `docs/artwork-generation.md`.
+`cockpit-frame-v3.png` and `cabin-titanium-v3.png` were generated with built-in OpenAI Image Gen for this theme. The user's six cockpit references informed the redesign brief: an open panoramic windshield, slim silver outlines, restrained light and a simple curved console, replacing the earlier heavy armour, stacked beams and bolt-heavy detailing. The fifth and sixth user images were supplied to the cockpit generation as aesthetic references; the new cockpit image was then used as the wall-material reference. These are newly generated fictional interior assets, not space-agency photographs or direct edits of a reference photograph.
+
+The generated files are preserved at their actual native dimensions: **1672×941** for the cockpit and **1254×1254** for the wall material. The user chose the best output available through the built-in tool after its resolution limits were explained. No external API fallback or upscaling was used, and these files are not native 4K. Full prompts and returned output paths are recorded in [cockpit-v3-generation.json](cockpit-v3-generation.json); source details, SHA-256 hashes and verification scope are in [the redesign record](../../docs/cockpit-redesign-2026-09-17.md).
+
+## Current four-scene catalog (introduced in 0.3.0)
+
+The active backgrounds and full attribution are documented in [scenes/CREDIT.md](scenes/CREDIT.md). The catalog is [scenes/manifest.json](scenes/manifest.json). Version 0.4.0 defaults to four 4000-pixel-wide publication photographs. The optional artistic mode preserves generated composites based on the user's visual references and credited NASA/ESA/CSA/STScI/ESO imagery; these composites are not telescope observations or accurate sky maps. A single small `yunxiang` disclosure in the interface provides the source credits.
+
+## Previous cockpit artwork (0.3.0)
+
+`cockpit-frame-v2.png` was the version 0.3.0 frame. It is an OpenAI Image Gen edit of the original frame, with the native output preserved at 1672×941. Its aperture geometry was traced from that image; both canopy and deck shared the same mask. This image and the original frame remain in the source repository for provenance; version 0.4.0 uses the v3 artwork above.
+
+## Previous artistic panorama (2026-09-15, version 0.2)
+
+`cosmic-horizon.png` was the version 0.2 default 1672×941 artistic composite generated with OpenAI Image Gen from the original M83, Westerlund 2 and Webb Cosmic Cliffs photographs below. `cosmic-panorama.png` preserves its first ultrawide variant. The images combine and extend observations into a fictional scene; they are **not a single telescope observation or an accurate sky map**. Source attribution remains required. Generation prompts and provenance are in `docs/artwork-generation.md`.
 
 `westerlund2.jpg` is the unmodified 4000×2997 publication JPEG, image `heic1509a`.
 
@@ -25,7 +39,7 @@ Credit: **NASA, ESA, and the Hubble Heritage Team (STScI/AURA)**. Acknowledgemen
 - [ESA/Hubble usage terms](https://esahubble.org/copyright/), Creative Commons Attribution 4.0 International.
 
 Downloaded 14 September 2026. SHA-256: `04E4A546EBE3FC524084AB0D3BE7293F4E5422CF977D2E7D07961E7E5450E757`.
-The visible attribution under the observation window links to the original source. The UI darkens and positions the photo as one continuous panorama shared by three window apertures, with procedural stars and warp trails on a separate layer. There is no planet layer. This is decorative composition, not a scientifically scaled view or endorsement.
+Version 0.2 displayed attribution under the observation window; version 0.3 consolidates active source credits in the corner disclosure. The UI darkens and positions the photo as one continuous panorama shared by three window apertures, with procedural stars and warp trails on a separate layer. There is no planet layer. This is decorative composition, not a scientifically scaled view or endorsement.
 
 ## Optional nebula photograph
 

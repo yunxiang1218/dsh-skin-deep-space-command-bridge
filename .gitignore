@@ -16,6 +16,10 @@ tmp/
 # profiles, sessions and settings created during validation and must not ship.
 test-results/
 
+# User reference downloads; runtime artwork and credited source photographs
+# needed to build the theme live in assets/resource/.
+/universe picture/
+
 # editors and operating systems
 .vscode/
 .idea/

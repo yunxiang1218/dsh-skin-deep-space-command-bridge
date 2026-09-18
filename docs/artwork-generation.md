@@ -1,5 +1,29 @@
 # Cockpit artwork
 
+## Current frame and cabin material, version 0.4 (2026-09-17)
+
+The cockpit was redesigned around the user's six visual references, with an open windshield, slim silver structure and a simple curved console. The previous stacked beams, rows of bolts and heavy black armour were removed from the design direction. The current files are `assets/resource/cockpit-frame-v3.png` (**1672×941**) and `assets/resource/cabin-titanium-v3.png` (**1254×1254**). The built-in OpenAI Image Gen outputs are preserved without upscaling. The tool does not expose a model selector or a hard output-resolution parameter; requested dimensions in a prompt are not proof that those dimensions were delivered.
+
+After the resolution constraint was explained, the user chose to complete the best result available through the existing built-in channel. No API/CLI fallback was used. The prompts requested 3840×2160 for the cockpit and 2048×2048 for the material; the actual outputs are the smaller dimensions above, not native 4K.
+
+Complete prompts, input-image paths, generation date and returned output paths are preserved in [cockpit-v3-generation.json](../assets/resource/cockpit-v3-generation.json). [The redesign record](cockpit-redesign-2026-09-17.md) documents the reference scope, exact asset hashes, geometry integration and separate visual/performance acceptance criteria. The six-image user brief and the generator's actual image inputs must not be conflated: the fifth and sixth user images were supplied as aesthetic references for a new cockpit, and the new cockpit was then supplied as the wall-material reference. This was new generation informed by style references, not a direct edit of an original reference photograph.
+
+The new frame requires retraced windshield masks and matching live-screen quadrilaterals. The UI remains native DSH content, with thinner glass edges and more compact panel spacing. The shared exterior, whole-cabin camera, independently floating screens and existing flight controls are retained. The previous [0.3.0 verification record](verification-0.3.0.md) remains historical evidence; its performance measurements do not establish performance for the new artwork and geometry.
+
+## Previous frame, version 0.3
+
+`assets/resource/cockpit-frame-v2.png` is an Image Gen edit of `cockpit-frame.png`. The generated output is preserved at its actual 1672×941 pixels. The SVG apertures were retraced from the new frame, including the side-window regions that cross the canopy/deck seam. The original frame remains available in the source tree.
+
+Prompt:
+
+> Edit the supplied spacecraft frame while preserving its 16:9 frontal symmetric composition and the geometry of all three windshield and monitor apertures. No seats, people, planets, UI text, logos or watermarks; pure black aperture placeholders. Replace the soft toy-like material with crisp photoreal precision-milled titanium, satin graphite, brushed-steel bevels, thin panel gaps, flush fasteners, ribs and ceramic insets. Use restrained icy cyan and tiny amber lights. Aim for a sharply focused aerospace photograph without depth-of-field blur, bloom, haze or melted mechanical detail. Preserve the exact aperture boundaries, especially lower side windows and monitor frames. Request the highest available resolution; geometry and material quality take priority.
+
+The new four-scene universe catalog is documented separately in [universe-scenes-generation.md](universe-scenes-generation.md), including source links, input pairings and complete generation prompts.
+
+The current renderer follows the browser's animation clock without the old 30 fps cap. WebGL2 batches the 600 stars and 180 warp rays; Canvas remains available when the GPU context is unavailable or lost. Physical display performance must be measured separately from headless browser cadence.
+
+## Original frame and previous panorama
+
 The user supplied `docs/design-reference.png` as a visual reference and then requested that seats be omitted because they obscure the view. The source project was retained throughout.
 
 Final asset: `assets/resource/cockpit-frame.png`, 1672×941 PNG.
@@ -38,4 +62,4 @@ Cabin material prompt:
 
 ## Motion reference and implementation
 
-[StarWars.com Hyperdrive](https://www.starwars.com/databank/hyperdrive) and its official image were consulted for the hyperspace visual reference. No film frames, video or sound are shipped. The animated effect is original canvas code: continuous projected stars, gradient trails, 180 advancing rays with fading recycle boundaries, blue tunnel glow and darkening that smoothly enter/leave according to the flight state. A 0.8 second exponential time constant produces approximately 95% transition after 2.4 seconds, independent of frame rate. Drawing is capped at 30 fps with device pixel ratio capped at 1.75; hidden pages and reduced motion pause it. Parking settles to the static photo instead of freezing bright warp streaks.
+[StarWars.com Hyperdrive](https://www.starwars.com/databank/hyperdrive) and its official image were consulted for the hyperspace visual reference. No film frames, video or sound are shipped. The animated effect is original canvas code: continuous projected stars, gradient trails, 180 advancing rays with fading recycle boundaries, blue tunnel glow and darkening that smoothly enter/leave according to the flight state. A 0.8 second exponential time constant produces approximately 95% transition after 2.4 seconds, independent of frame rate. In the historical version 0.2 implementation, drawing was capped at 30 fps with device pixel ratio capped at 1.75; hidden pages and reduced motion pause it. Parking settles to the static photo instead of freezing bright warp streaks.

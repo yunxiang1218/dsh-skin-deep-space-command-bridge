@@ -1,0 +1,41 @@
+/* One discreet author/attribution location. Credits expand only on request. */
+body[data-dsh-deep-space-command-bridge] .dsc-signature {
+  position:fixed;left:14px;bottom:9px;z-index:502;color:#9bb3bf;
+  font:10px/1.5 Consolas,"Microsoft YaHei UI",monospace;letter-spacing:.3px;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-signature summary {
+  list-style:none;cursor:pointer;padding:4px 7px;border:1px solid #5f80933b;
+  border-radius:3px;background:#08111bd9;text-shadow:0 1px 2px #000;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-signature summary::-webkit-details-marker {display:none}
+body[data-dsh-deep-space-command-bridge] .dsc-signature summary:hover {color:#d4edf3;border-color:#76afbb}
+body[data-dsh-deep-space-command-bridge] .dsc-artwork-credits {
+  position:absolute;left:0;bottom:35px;width:min(410px,calc(100vw - 28px));max-height:60vh;overflow:auto;
+  padding:14px 16px;color:#adbfcb;background:#0b1825f5;border:1px solid #456777;border-radius:5px;
+  box-shadow:0 6px 24px #0008;letter-spacing:0;font:11px/1.7 "Segoe UI","Microsoft YaHei UI",sans-serif;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-artwork-credits p {margin:0 0 10px}
+body[data-dsh-deep-space-command-bridge] .dsc-artwork-credits p:last-child {margin:0}
+body[data-dsh-deep-space-command-bridge] .dsc-artwork-credits strong {color:#d6e8ed}
+body[data-dsh-deep-space-command-bridge] .dsc-artwork-credits a {color:#98d0e1}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation-bar {flex-wrap:wrap}
+body[data-dsh-deep-space-command-bridge] .dsc-navigation-bar .dsc-layout-toggle {display:block;position:static;margin:0}
+body[data-dsh-deep-space-command-bridge] .dsc-stage::after {box-shadow:none;background:none}
+/* Keep the drawing's precision edges intact: no blur/filter on the frame. */
+body[data-dsh-deep-space-command-bridge] .dsc-cabin-front :is(.dsc-canopy,.dsc-deck) {filter:none;opacity:1}
+/* Thin glass edges sit within the generated silver housings, without a second heavy bezel. */
+body[data-dsh-deep-space-command-bridge] [data-dsc-screen] {
+  border-radius:12px;background:linear-gradient(145deg,#10273deb,#071626fa);
+  box-shadow:inset 0 0 0 1px #a3d8fc26,inset 0 1px #e4f5ff24;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-screen-toolbar {
+  background:linear-gradient(180deg,#274b6644,#15334933);border-bottom-color:#8fb4d428;
+  letter-spacing:.7px;color:#b4d6e9;
+}
+body[data-dsh-deep-space-command-bridge] .dsc-screen-toolbar button {border-radius:4px;border-color:#b4ddf03d;background:#27465b66}
+body[data-dsh-deep-space-command-bridge] [data-dsc-floating=true] {
+  box-shadow:0 16px 40px #03112099,inset 0 1px #e4f5ff24;border-color:#a5d3ef99;
+}
+@media(max-width:1000px) {
+  body[data-dsh-deep-space-command-bridge] .dsc-signature {position:relative;left:auto;bottom:auto;display:table;margin:12px 10px}
+}

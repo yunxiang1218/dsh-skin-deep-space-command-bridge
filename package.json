@@ -1,6 +1,6 @@
 {
   "name": "@dsh-external/dsh-client-ui-skin-deep-space-command-bridge",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "Deep Space Command Bridge — independent cockpit theme for DeepSeek Harness",
   "private": true,
   "type": "module",
@@ -64,6 +64,8 @@
     "skin.build.json",
     "cordis.patch.yml",
     "assets/resource/CREDIT.md",
+    "assets/resource/scenes/CREDIT.md",
+    "assets/resource/scenes/manifest.json",
     "assets/resource/background.json",
     "preview/*.png",
     "docs/*.md",

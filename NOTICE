@@ -7,9 +7,16 @@ and artwork have not been overwritten or bundled into this theme.
 
 The galaxy and nebula photographs are credited in assets/resource/CREDIT.md.
 They are not licensed under this project's MIT software license. The source
-usage terms remain applicable. The cockpit frame is AI-generated artwork.
-The default panorama is an AI-assisted artistic composite of credited M83,
-Westerlund 2 and Webb Cosmic Cliffs observations. It is not a scientific sky map.
-The titanium wall texture is also AI-generated. One continuous panorama is shared by three window apertures;
+usage terms remain applicable. The current slim silver cockpit frame and calm
+titanium wall material are AI-generated artwork made with built-in OpenAI
+Image Gen on 17 September 2026. Their native files are 1672 x 941 and
+1254 x 1254 pixels respectively; neither is an upscaled or native 4K asset.
+Prompts and provenance are recorded in docs/cockpit-redesign-2026-09-17.md
+and assets/resource/cockpit-v3-generation.json in the source repository.
+The default exterior displays four credited, 4000-pixel-wide astronomical
+publication photographs. The optional artistic panoramas are AI-assisted composites of user-supplied
+references and credited NASA/ESA/CSA/STScI/ESO observations. They are not scientific
+sky maps. Complete current credits are in assets/resource/scenes/CREDIT.md.
+One continuous panorama is shared by three window apertures;
 procedural stars and warp trails are separate decorative effects.
 The three independently dockable working screens are live UI, not artwork.

@@ -1,0 +1,115 @@
+{
+  "date": "2026-09-16",
+  "tool": "Built-in image_gen.imagegen",
+  "requestedDimensions": "3840x1280",
+  "actualDimensions": "2172x724",
+  "conversion": "PNG to lossless WebP only, no resizing, cropping, recoloring or painting",
+  "records": [
+    {
+      "id": "aurora-reach",
+      "label": "青金云海",
+      "references": [
+        "universe picture/universe-04.webp",
+        "assets/resource/scenes/sources/webb-carina-weic2205a.jpg"
+      ],
+      "generatedFile": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0a524-9b19-7051-8a98-58195b3fb5a5\\exec-54cad6dc-cc7f-441b-8b85-fef99ff42942.png",
+      "output": "assets/resource/scenes/aurora-reach.webp",
+      "prompt": "Use case: compositing. Create one extraordinary photorealistic cinematic deep-space panorama, 3:1 ultrawide composition, requested output 3840x1280 or the maximum native detail available. Project: Deep Space Command Bridge, viewed continuously through three spacecraft windows, but render ONLY the exterior universe as a single continuous wide vista. Reference 1: supplied Helix Nebula photo, use its transparent turquoise ionized core and copper shell color relationships as inspiration, not its isolated small round object. Reference 2: real Webb Cosmic Cliffs photo, use its breathtaking fine sculpted amber gas ridges and small precise stars as the physical texture language. Recompose and imaginatively extend them into a NEW vast luminous turquoise-and-gold nebular archipelago: flowing gold filament walls along the lower third and far left, turquoise ionized cavities across the center-right, deep midnight-cyan distances, delicate luminous atmospheric layers. A surprising diagonal composition with tiny pin-sharp white and pale gold stars at many apparent distances, sharp microstructure on lit dust filaments, restrained true photographic dynamic range, subtle volumetric depth without fogging everything. Enough textured scenery at both extreme horizontal edges for left/right windows. Major luminous filaments live in the upper two thirds; corners retain subtle detail and stars. Space is enormous and contemplative. Seamless-feeling single camera view, no collage edges or pasted objects. This is fictional composite artwork inspired by astronomical photography, not an accurate observation. NO cockpit, window frames, panels, spacecraft, terrestrial ground, horizons, planets, moons, text, labels, watermark, logos, giant lens flares, cartoon, brush strokes, heavy blur, blown-out white blob, artificial rainbow.",
+      "officialSource": {
+        "credit": "NASA, ESA, CSA, and STScI",
+        "source": "https://esawebb.org/images/weic2205a/",
+        "file": "webb-carina-weic2205a.jpg",
+        "url": "https://cdn.esawebb.org/archives/images/publicationjpg/weic2205a.jpg",
+        "title": "NIRCam Image of the Cosmic Cliffs in Carina",
+        "license": "https://esawebb.org/copyright/",
+        "sha256": "0c36eb0d1d7ccb097652895e9597cc0678a35148ab494697a387f1a55889230f",
+        "width": 4000,
+        "height": 2317
+      },
+      "width": 2172,
+      "height": 724,
+      "bytes": 2095566,
+      "sha256": "9347a3ca4606d423d7a51964bf34b4d7f3e195bd234eab64876dfcf5b9dc09c0"
+    },
+    {
+      "id": "violet-archipelago",
+      "label": "紫蔷薇星系",
+      "references": [
+        "universe picture/universe-02.webp",
+        "universe picture/universe-07.webp",
+        "assets/resource/scenes/sources/hubble-triangulum-heic1901a.jpg"
+      ],
+      "generatedFile": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0a524-9b19-7051-8a98-58195b3fb5a5\\exec-caa32746-5c55-457a-a3e7-28ad356262a6.png",
+      "output": "assets/resource/scenes/violet-archipelago.webp",
+      "prompt": "Use case: compositing. Produce one luxurious photorealistic cinematic astronomical panorama with astonishing crisp detail, 3:1 ultrawide horizontal, requested 3840x1280 at maximum native detail. Render only deep space for a continuous three-window spacecraft view, no vehicle or architecture. Reference 1: supplied Triangulum-like spiral galaxy photo provides the delicate loose blue spiral arms, discrete red stellar nurseries, and glowing dispersed core. Reference 2: supplied pink nebula photo provides intricate rose emission filaments and airy translucent gas. Reference 3: Hubble M33 official mosaic provides authentic dense stellar microtexture and subtle brown dust lanes. Combine and entirely recompose these sources into a NEW single continuous fictional panorama. A grand oblique pale pearl and lavender spiral galaxy lies slightly left of center, luminous but not clipped, extending across half the width. Wispy violet and rose nebular islands curl along its outer arms into the right half and both upper corners; vast indigo transparent voids between folds create palpable scale. The galaxy must remain recognizably astronomical, with fine-grained resolved star clouds, sinuous dark dust filaments, very small bright blue clusters and crimson knots, not a smooth whirlpool or synthetic vortex. Fine sharp stars spread naturally to every edge, subtle visual interest at both far sides, soft falloff without flat black areas. Balanced contrast for long viewing, sophisticated limited palette of silver, deep indigo, violet and subdued rose. Extremely realistic telescope-photo texture, no painterly haze. No collage boundaries. NO foreground planet, moon, cockpit, window outline, spacecraft, earthly clouds, water, ground, letters, labels, watermark, logos, graphic symbols, UI, big lens flare, thick star trails, oversaturated rainbow or artificial circular portal. New artwork, not an accurate sky map.",
+      "officialSource": {
+        "credit": "NASA, ESA, and M. Durbin, J. Dalcanton, and B. F. Williams (University of Washington)",
+        "source": "https://esahubble.org/images/heic1901a/",
+        "file": "hubble-triangulum-heic1901a.jpg",
+        "url": "https://cdn.esahubble.org/archives/images/publicationjpg/heic1901a.jpg",
+        "title": "The sharpest view ever of the Triangulum Galaxy",
+        "license": "https://esahubble.org/copyright/",
+        "sha256": "47a41bfbaef744043d745404b082ce23be9aeefaae2fb094e9de0db883fd89f1",
+        "width": 4000,
+        "height": 2251
+      },
+      "width": 2172,
+      "height": 724,
+      "bytes": 2128168,
+      "sha256": "f7bc30ab8ff5ed3babad57484412145d8444ab2f849dd4f0745063a6c9f0f18a"
+    },
+    {
+      "id": "sapphire-veil",
+      "label": "冰蓝尘海",
+      "references": [
+        "universe picture/universe-09.webp",
+        "assets/resource/scenes/sources/eso-m78-eso1105a.jpg"
+      ],
+      "generatedFile": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0a524-9b19-7051-8a98-58195b3fb5a5\\exec-88e58a1b-a7f5-4219-9859-4b806b2c75f1.png",
+      "output": "assets/resource/scenes/sapphire-veil.webp",
+      "prompt": "Use case: compositing. Create a breathtaking scientifically inspired photorealistic deep-space environment panorama, 3:1 ultrawide, requested native 3840x1280 or maximum available native resolution. Exterior universe ONLY; it will be one continuous scenery across three cockpit windows, so deliver no cockpit/window/UI at all. Reference 1 supplied dense violet starfield supplies its astonishing star-cluster depth and subtle glowing blue-violet association. Reference 2 ESO Messier 78 reflection nebula supplies finely textured blue reflected light, inky twisting dust lanes, and irregular faint wispy boundaries. Fuse into a completely new expansive icy-blue reflection-nebula vista. A luminous silver-blue cloud ribbon crosses diagonally from lower-left to upper-right, separated into two translucent swaths by intricate charcoal-blue dust rivers; small electric-blue stars ignite tiny regions of the wisps while much more distant pinpoint clusters shimmer through thin veils. Make cooler and quieter than a bright gold nebula or rose spiral galaxy: dominant sapphire, blue-grey, restrained cerulean, rare pale amber stellar points. Deep textured navy voids, never pure featureless black window areas. View feels vast and detailed, not a foggy terrestrial sky. Delicate brittle filaments, wispy silk-like interstellar dust, gradients at several depths, pin-sharp widely varied natural stars, small background galaxies. Meaningful connected scenery extends into far left and right edges. Lightly asymmetric negative space toward center. Natural photographic texture, crisp 4K microcontrast without crunchy sharpening. NO planets, moon, black sphere, bright galactic core, ring, portal, cockpit, window frames, ground, ocean, text, logo, watermark, graphic overlays, giant diffraction spikes, strong vignette, painterly strokes, collage seam. It is beautiful fictional composite art, not a scientifically scaled map.",
+      "officialSource": {
+        "credit": "ESO/Igor Chekalin",
+        "source": "https://www.eso.org/public/images/eso1105a/",
+        "file": "eso-m78-eso1105a.jpg",
+        "url": "https://cdn.eso.org/images/publicationjpg/eso1105a.jpg",
+        "title": "Messier 78: a reflection nebula in Orion",
+        "license": "https://www.eso.org/public/outreach/copyright/",
+        "sha256": "7914fc330f1619e7c070d8c6b52e78de960706638f5f7d3e32b2768ddf399778",
+        "width": 4000,
+        "height": 3876
+      },
+      "width": 2172,
+      "height": 724,
+      "bytes": 2172878,
+      "sha256": "af2dda996afdef20c2cb7a76ce33e2c3598251f9f627076d435abce86530879d"
+    },
+    {
+      "id": "ember-forge",
+      "label": "赤金星炉",
+      "references": [
+        "universe picture/universe-05.webp",
+        "universe picture/universe-08.webp",
+        "assets/resource/scenes/sources/webb-rho-ophiuchi-weic2316a.jpg"
+      ],
+      "generatedFile": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0a524-9b19-7051-8a98-58195b3fb5a5\\exec-92d0a590-4325-4dab-ac99-36afd114cd47.png",
+      "output": "assets/resource/scenes/ember-forge.webp",
+      "prompt": "Use case: compositing. Generate a premium photorealistic cinematic panoramic universe scene, 3:1 extremely wide format, requested output 3840x1280 at highest native detail. Asset for three continuous spacecraft windows; show ONLY exterior deep space as one coherent vista. Use input 1 supplied Horsehead emission-cloud photograph as reference for the blazing red edge of a deep-dark dust ridge and crisp hot blue stars. Input 2 supplied slender red filament image provides finely braided incandescent gas filaments. Input 3 official Webb Rho Ophiuchi photo provides spectacular sculpted amber stellar-wind cavities, red molecular jets, natural shaded granular dust. Synthesize and extend these into an entirely NEW fictional red-and-amber star-forming region of staggering scale: broad rust-red and burnt-copper clouds sweep across the full width, intricate red filaments surround a softly luminous pale-gold wind-carved hollow near the right third, with dark mahogany dust channels and a few very sharp pale blue newborn stars providing restrained contrast. The clouds are weightless three-dimensional interstellar gas, NOT mountains, flames, lava or an earthly sunset. Design a horizontal river of luminous scarlet edges through the center-upper area, beautifully detailed sides with stars and faint wisps so side windows never read black. Innumerable tiny resolved stars and small restrained diffraction glints. Deep shadows retain fine texture, small highlights stay controlled, photograph-like complexity at close inspection, no broad plastic-looking gradients. Distinct warm palette compared with blue, turquoise and violet scenes. No collage edges. NO cockpit, screens, architecture, planets, spheres, moons, ground, spaceship, black hole, portal, text, watermark, logos, labels, giant lensflare, star trails, illustration brushwork or oversaturated orange fog. Realistic astronomical photographic material transformed into fictional cinematic art, not claimed as actual observation.",
+      "officialSource": {
+        "credit": "NASA, ESA, CSA, STScI, K. Pontoppidan (STScI), A. Pagan (STScI)",
+        "source": "https://esawebb.org/images/weic2316a/",
+        "file": "webb-rho-ophiuchi-weic2316a.jpg",
+        "url": "https://cdn.esawebb.org/archives/images/publicationjpg/weic2316a.jpg",
+        "title": "Rho Ophiuchi cloud complex",
+        "license": "https://esawebb.org/copyright/",
+        "sha256": "ec5077f5e8cd17823d0519f96398be85fba50555920db0a818f7498b0b7bd27f",
+        "width": 4000,
+        "height": 3746
+      },
+      "width": 2172,
+      "height": 724,
+      "bytes": 1949758,
+      "sha256": "b5dda3f9c0369075a78d5c66c203cb3d65887ee327e6aa594b4be49cc8a61956"
+    }
+  ]
+}
